@@ -112,7 +112,7 @@ namespace CCImGuiWidgets
 
                 if (ImGui::BeginTabBar("Node Properties", ImGuiTabBarFlags_None))
                 {
-                    if (ImGui::BeginTabItem("Node"))
+                    if (ImGui::BeginTabItem("2D"))
                     {
                         v[0] = node->getPositionX();
                         v[1] = node->getPositionY();
@@ -144,6 +144,51 @@ namespace CCImGuiWidgets
                         {
                             node->setSkewX(v[0]);
                             node->setSkewY(v[1]);
+                        }
+
+                        i = node->getTag();
+                        if (ImGui::DragInt("Tag", &i))
+                            node->setTag(i);
+
+                        i = node->getZOrder();
+                        if (ImGui::DragInt("Z Order", &i))
+                            node->setZOrder(i);
+
+                        b = node->isVisible();
+                        if (ImGui::Checkbox("Visible", &b))
+                            node->setVisible(b);
+
+                        ImGui::EndTabItem();
+                    }
+
+                    if (ImGui::BeginTabItem("3D"))
+                    {
+                        v[0] = node->getPositionX();
+                        v[1] = node->getPositionY();
+                        v[2] = node->getPositionZ();
+                        if (ImGui::DragFloat3("Position", v, 1.0f))
+                            node->setPosition3D(Vec3(v[0], v[1], v[2]));
+
+                        v[0] = node->getScaleX();
+                        v[1] = node->getScaleY();
+                        v[2] = node->getScaleZ();
+                        if (ImGui::DragFloat3("Scale", v, 0.01f))
+                        {
+                            node->setScaleX(v[0]);
+                            node->setScaleY(v[1]);
+                            node->setScaleZ(v[2]);
+                        }
+
+                        Vec3 rot = node->getRotation3D();
+                        v[0] = rot.x;
+                        v[1] = rot.y;
+                        v[2] = rot.z;
+                        if (ImGui::DragFloat3("Rotation", v, 1.0f))
+                        {
+                            rot.x = v[0];
+                            rot.y = v[1];
+                            rot.z = v[2];
+                            node->setRotation3D(rot);
                         }
 
                         i = node->getTag();

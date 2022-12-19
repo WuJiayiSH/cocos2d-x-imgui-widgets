@@ -37,11 +37,11 @@ namespace CCImGuiWidgets
                 {
                     string nameLower;
                     nameLower.resize(name.size());
-                    transform(name.begin(), name.end(), nameLower.begin(), tolower);
+                    transform(name.begin(), name.end(), nameLower.begin(), ::tolower);
 
                     string queryStringLower;
                     queryStringLower.resize(strlen(queryString));
-                    transform(queryString, queryString + queryStringLower.size(), queryStringLower.begin(), tolower);
+                    transform(queryString, queryString + queryStringLower.size(), queryStringLower.begin(), ::tolower);
                     
                     index = nameLower.find(queryStringLower);
                 }

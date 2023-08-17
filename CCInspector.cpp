@@ -8,7 +8,7 @@ namespace CCImGuiWidgets
 {
     namespace
     {
-        RefPtr<Node> selectedNode = nullptr;
+        WeakPtr<Node> selectedNode = nullptr;
 
         char queryString[128] = "";
 

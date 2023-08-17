@@ -10,7 +10,7 @@ namespace CCImGuiWidgets
 {
     namespace
     {
-        RefPtr<GObject> selectedObject = nullptr;
+        cocos2d::WeakPtr<GObject> selectedObject = nullptr;
 
         char queryString[128] = "";
 

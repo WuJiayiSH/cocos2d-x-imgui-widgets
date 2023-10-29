@@ -150,9 +150,9 @@ namespace CCImGuiWidgets
                         if (ImGui::DragInt("Tag", &i))
                             node->setTag(i);
 
-                        i = node->getZOrder();
+                        i = node->getLocalZOrder();
                         if (ImGui::DragInt("Z Order", &i))
-                            node->setZOrder(i);
+                            node->setLocalZOrder(i);
 
                         b = node->isVisible();
                         if (ImGui::Checkbox("Visible", &b))
@@ -195,9 +195,9 @@ namespace CCImGuiWidgets
                         if (ImGui::DragInt("Tag", &i))
                             node->setTag(i);
 
-                        i = node->getZOrder();
+                        i = node->getLocalZOrder();
                         if (ImGui::DragInt("Z Order", &i))
-                            node->setZOrder(i);
+                            node->setLocalZOrder(i);
 
                         b = node->isVisible();
                         if (ImGui::Checkbox("Visible", &b))
@@ -215,11 +215,11 @@ namespace CCImGuiWidgets
                         v[3] = node->getOpacity() / 255.0f;
                         if (ImGui::ColorEdit4("Color", v))
                         {
-                            color.r = v[0] * 255;
-                            color.g = v[1] * 255;
-                            color.b = v[2] * 255;
+                            color.r = static_cast<GLubyte>(v[0] * 255);
+                            color.g = static_cast<GLubyte>(v[1] * 255);
+                            color.b = static_cast<GLubyte>(v[2] * 255);
                             node->setColor(color);
-                            node->setOpacity(v[3] * 255);
+                            node->setOpacity(static_cast<GLubyte>(v[3] * 255));
                         }
                         
                         BlendProtocol* blendNode = dynamic_cast<BlendProtocol*>(node);

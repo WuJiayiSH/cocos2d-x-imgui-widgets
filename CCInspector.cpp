@@ -51,6 +51,7 @@ namespace CCImGuiWidgets
                     ImGui::TreeNodeEx(
                         (void*)(intptr_t)node,
                         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | (selectedNode == node ? ImGuiTreeNodeFlags_Selected : 0),
+                        "%s",
                         name.c_str()
                     );
 
@@ -71,6 +72,7 @@ namespace CCImGuiWidgets
                 bool ok = ImGui::TreeNodeEx(
                     (void*)(intptr_t)node,
                     ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selectedNode == node ? ImGuiTreeNodeFlags_Selected : 0),
+                    "%s",
                     name.c_str()
                 );
 
@@ -92,6 +94,7 @@ namespace CCImGuiWidgets
                 ImGui::TreeNodeEx(
                     (void*)(intptr_t)node,
                     ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | (selectedNode == node ? ImGuiTreeNodeFlags_Selected : 0),
+                    "%s",
                     name.c_str()
                 );
 

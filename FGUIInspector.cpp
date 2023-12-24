@@ -80,7 +80,9 @@ namespace CCImGuiWidgets
                     ImGui::TreeNodeEx(
                         (void *)(intptr_t)object,
                         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | (selectedObject == object ? ImGuiTreeNodeFlags_Selected : 0),
-                        name.c_str());
+                        "%s",
+                        name.c_str()
+                    );
 
                     if (ImGui::IsItemClicked())
                         selectedObject = object;
@@ -102,7 +104,9 @@ namespace CCImGuiWidgets
                 bool ok = ImGui::TreeNodeEx(
                     (void *)(intptr_t)object,
                     ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | (selectedObject == object ? ImGuiTreeNodeFlags_Selected : 0),
-                    name.c_str());
+                    "%s",
+                    name.c_str()
+                );
 
                 if (ImGui::IsItemClicked())
                     selectedObject = object;
@@ -122,7 +126,9 @@ namespace CCImGuiWidgets
                 ImGui::TreeNodeEx(
                     (void *)(intptr_t)object,
                     ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | (selectedObject == object ? ImGuiTreeNodeFlags_Selected : 0),
-                    name.c_str());
+                    "%s",
+                    name.c_str()
+                );
 
                 if (ImGui::IsItemClicked())
                     selectedObject = object;

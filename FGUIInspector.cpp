@@ -141,7 +141,7 @@ namespace CCImGuiWidgets
             {
                 GObject *object = selectedObject;
                 bool b = false;
-                int i = 0, j = 0;
+                int i = 0;
                 float v[4];
 
                 if (ImGui::BeginTabBar("Object Properties", ImGuiTabBarFlags_None))

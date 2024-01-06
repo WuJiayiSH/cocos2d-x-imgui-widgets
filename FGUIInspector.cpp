@@ -1,5 +1,12 @@
 #include "cocos2d.h"
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
 #include "FairyGUI.h"
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 #include "imgui/imgui.h"
 
 using namespace cocos2d;

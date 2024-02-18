@@ -206,6 +206,14 @@ namespace CCImGuiWidgets
                         if (ImGui::Checkbox("Visible", &b))
                             node->setVisible(b);
 
+                        b = node->getCastShadow();
+                        if (ImGui::Checkbox("Cast Shadow", &b))
+                            node->setCastShadow(b);
+
+                        b = node->getRecieveShadow();
+                        if (ImGui::Checkbox("Recieve Shadow", &b))
+                            node->setRecieveShadow(b);
+
                         ImGui::EndTabItem();
                     }
 
@@ -280,6 +288,90 @@ namespace CCImGuiWidgets
                             node->setOpacityModifyRGB(b);
 
                         ImGui::EndTabItem();
+                    }
+
+                    if(auto light = dynamic_cast<BaseLight*>(node))
+                    {
+                        if (ImGui::BeginTabItem("Light"))
+                        {
+                            b = light->isEnabled();
+                            if (ImGui::Checkbox("Enabled", &b))
+                                light->setEnabled(b);
+
+                            v[0] = light->getIntensity();
+                            if (ImGui::DragFloat("Intensity", v, 0.01f, 0.0f, 1.0f))
+                                light->setIntensity(v[0]);
+
+                            const char* lightFlagItems[] = {
+                                "LIGHT0",
+                                "LIGHT1",
+                                "LIGHT2",
+                                "LIGHT3",
+                                "LIGHT4",
+                                "LIGHT5",
+                                "LIGHT6",
+                                "LIGHT7",
+                                "LIGHT8",
+                                "LIGHT9",
+                                "LIGHT10",
+                                "LIGHT11",
+                                "LIGHT12",
+                                "LIGHT13",
+                                "LIGHT14",
+                                "LIGHT15",
+                            };
+
+                            const int lightFlags[] = {
+                                (int)LightFlag::LIGHT0,
+                                (int)LightFlag::LIGHT1,
+                                (int)LightFlag::LIGHT2,
+                                (int)LightFlag::LIGHT3,
+                                (int)LightFlag::LIGHT4,
+                                (int)LightFlag::LIGHT5,
+                                (int)LightFlag::LIGHT6,
+                                (int)LightFlag::LIGHT7,
+                                (int)LightFlag::LIGHT8,
+                                (int)LightFlag::LIGHT9,
+                                (int)LightFlag::LIGHT10,
+                                (int)LightFlag::LIGHT11,
+                                (int)LightFlag::LIGHT12,
+                                (int)LightFlag::LIGHT13,
+                                (int)LightFlag::LIGHT14,
+                                (int)LightFlag::LIGHT15,
+                            };
+
+                            i = distance(lightFlags, find(begin(lightFlags), end(lightFlags), (int)light->getLightFlag()));
+                            if (ImGui::Combo("LightFlag", &i, lightFlagItems, IM_ARRAYSIZE(lightFlagItems)))
+                            {
+                                light->setLightFlag(static_cast<LightFlag>(lightFlags[i]));
+                            }
+
+                            const char* shadowSizeItems[] = {
+                                "Low_256x256",
+                                "Medium_512x512",
+                                "High_1024x1024",
+                                "Ultra_2048x2048"
+                            };
+
+                            const int shadowSizes[] = {
+                                (int)ShadowSize::Low_256x256,
+								(int)ShadowSize::Medium_512x512,
+								(int)ShadowSize::High_1024x1024,
+								(int)ShadowSize::Ultra_2048x2048,
+                            };
+
+							i = distance(shadowSizes, find(begin(shadowSizes), end(shadowSizes), (int)light->getShadowMapSize()));
+                            if (ImGui::Combo("Shadow Map Size", &i, shadowSizeItems, IM_ARRAYSIZE(shadowSizeItems)))
+                            {
+                                light->setShadowMapSize(static_cast<ShadowSize>(shadowSizes[i]));
+                            }
+
+                            v[0] = light->getShadowBias();
+							if (ImGui::DragFloat("Shadow Bias", v, 0.001f))
+                                light->setShadowBias(v[0]);
+
+                            ImGui::EndTabItem();
+                        }
                     }
                     
                     ImGui::EndTabBar();

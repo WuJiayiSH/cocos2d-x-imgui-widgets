@@ -9,18 +9,21 @@
 
 namespace CCImGuiWidgets
 {
-    class ImGuiWidgetManager: public cocos2d::Ref
-    {
-    public:
-        template<typename T>
-        struct AutoRegister
-        {
-            AutoRegister(std::string&& name, std::string&& description, std::vector<std::string>&& dependencies)
-            {
-                auto widget = new T();
-                widget->_name = std::move(name);
-                widget->_description = std::move(description);
-                widget->_dependencies = std::move(dependencies);
+	class ImGuiWidgetManager : public cocos2d::Ref
+	{
+	public:
+		template<typename T>
+		struct AutoRegister
+		{
+			AutoRegister(const char* name, const char* description, const std::initializer_list<const char*>& dependencies)
+			{
+				auto widget = new T();
+				widget->_name = name;
+				widget->_description = description;
+				for (const char* dependency : dependencies)
+				{
+					widget->_dependencies.push_back(dependency);
+				}
                 ImGuiWidgetManager::getInstance()->_widgets.emplace(name, widget);
             }
         };

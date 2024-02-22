@@ -15,12 +15,12 @@ namespace CCImGuiWidgets
         template<typename T>
         struct AutoRegister
         {
-            AutoRegister(const std::string& name, const std::string& description, const std::vector<std::string>& dependencies)
+            AutoRegister(std::string&& name, std::string&& description, std::vector<std::string>&& dependencies)
             {
                 auto widget = new T();
-                widget->_name = name;
-                widget->_description = description;
-                widget->_dependencies = dependencies;
+                widget->_name = std::move(name);
+                widget->_description = std::move(description);
+                widget->_dependencies = std::move(dependencies);
                 ImGuiWidgetManager::getInstance()->_widgets.emplace(name, widget);
             }
         };

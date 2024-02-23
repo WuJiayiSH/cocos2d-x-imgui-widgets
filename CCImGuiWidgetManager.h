@@ -31,6 +31,9 @@ namespace CCImGuiWidgets
         static ImGuiWidgetManager* getInstance();
         ImGuiWidget* getWidget(const std::string& name);
 
+		Ref* getHandle(const std::string& key) { return _handles[key]; };
+		void setHandle(const std::string& key, Ref* handle) {  _handles[key] = handle; };
+
         bool load();
         void update(float dt);
         void draw();
@@ -38,6 +41,7 @@ namespace CCImGuiWidgets
         ImGuiWidgetManager() {};
         ~ImGuiWidgetManager();
         std::unordered_map<std::string, ImGuiWidget*> _widgets;
+		std::unordered_map<std::string, cocos2d::WeakPtr<Ref>> _handles;
     };
 }
 

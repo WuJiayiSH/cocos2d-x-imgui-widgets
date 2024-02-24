@@ -66,16 +66,4 @@ namespace CCImGuiWidgets
     {
 
     }
-
-    void ImGuiWidgetManager::draw()
-    {
-        for (const std::pair<const std::string, ImGuiWidget*>& pair : _widgets)
-        {
-            if (ImGuiWidget* widget = pair.second)
-            {
-                if (widget->isLoaded())
-                    widget->draw();
-            }
-        }
-    }
 }

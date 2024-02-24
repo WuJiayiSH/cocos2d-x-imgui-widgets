@@ -2,292 +2,38 @@
 #include "CCImGuiWidgetManager.h"
 #include "CCIMGUI.h"
 #include "cocos2d.h"
+#include "CCImGuiPropertyRenderer.h"
 
 using namespace cocos2d;
 using namespace std;
 
 namespace CCImGuiWidgets
 {
+	template<typename LambdaType>
+	using LambdaSignature = decltype(&LambdaType::operator());
+
+	template<typename LambdaType>
+	LambdaSignature<LambdaType>* optional_override(const LambdaType& fp) {
+		return fp;
+	}
+
     void ImGuiNodeProperties::draw()
     {
 		bool open = true;
          if (ImGui::Begin("Node Properties", &open))
         {
-			 if (Node* node = dynamic_cast<Node*>(ImGuiWidgetManager::getInstance()->getHandle("CCImGuiWidgets.ImGuiNodeTree.SelectedNode"))) {
+					if (Node* node = dynamic_cast<Node*>(ImGuiWidgetManager::getInstance()->getHandle("CCImGuiWidgets.ImGuiNodeTree.SelectedNode")))
+					{
 
-				 bool b = false;
-				 int i = 0, j = 0;
-				 float v[4];
-
-				 if (ImGui::BeginTabBar("Node Properties", ImGuiTabBarFlags_None))
-				 {
-					 if (ImGui::BeginTabItem("2D"))
-					 {
-						 v[0] = node->getPositionX();
-						 v[1] = node->getPositionY();
-						 if (ImGui::DragFloat2("Position", v, 1.0f))
-							 node->setPosition(v[0], v[1]);
-
-						 v[0] = node->getContentSize().width;
-						 v[1] = node->getContentSize().height;
-						 if (ImGui::DragFloat2("Content Size", v, 1.0f))
-							 node->setContentSize(Size(v[0], v[1]));
-
-						 v[0] = node->getAnchorPoint().x;
-						 v[1] = node->getAnchorPoint().y;
-						 if (ImGui::DragFloat2("Anchor Point", v, 0.01f))
-							 node->setAnchorPoint(Vec2(v[0], v[1]));
-
-						 v[0] = node->getScaleX();
-						 v[1] = node->getScaleY();
-						 if (ImGui::DragFloat2("Scale", v, 0.01f))
-							 node->setScale(v[0], v[1]);
-
-						 v[0] = node->getRotation();
-						 if (ImGui::DragFloat("Rotation", v, 1.0f))
-							 node->setRotation(v[0]);
-
-						 v[0] = node->getSkewX();
-						 v[1] = node->getSkewY();
-						 if (ImGui::DragFloat2("Skew", v, 0.1f))
-						 {
-							 node->setSkewX(v[0]);
-							 node->setSkewY(v[1]);
-						 }
-
-						 i = node->getTag();
-						 if (ImGui::DragInt("Tag", &i))
-							 node->setTag(i);
-
-						 i = node->getLocalZOrder();
-						 if (ImGui::DragInt("Z Order", &i))
-							 node->setLocalZOrder(i);
-
-						 b = node->isVisible();
-						 if (ImGui::Checkbox("Visible", &b))
-							 node->setVisible(b);
-
-						 ImGui::EndTabItem();
-					 }
-
-					 if (ImGui::BeginTabItem("3D"))
-					 {
-						 v[0] = node->getPositionX();
-						 v[1] = node->getPositionY();
-						 v[2] = node->getPositionZ();
-						 if (ImGui::DragFloat3("Position", v, 1.0f))
-							 node->setPosition3D(Vec3(v[0], v[1], v[2]));
-
-						 v[0] = node->getScaleX();
-						 v[1] = node->getScaleY();
-						 v[2] = node->getScaleZ();
-						 if (ImGui::DragFloat3("Scale", v, 0.01f))
-						 {
-							 node->setScaleX(v[0]);
-							 node->setScaleY(v[1]);
-							 node->setScaleZ(v[2]);
-						 }
-
-						 Vec3 rot = node->getRotation3D();
-						 v[0] = rot.x;
-						 v[1] = rot.y;
-						 v[2] = rot.z;
-						 if (ImGui::DragFloat3("Rotation", v, 1.0f))
-						 {
-							 rot.x = v[0];
-							 rot.y = v[1];
-							 rot.z = v[2];
-							 node->setRotation3D(rot);
-						 }
-
-						 i = node->getTag();
-						 if (ImGui::DragInt("Tag", &i))
-							 node->setTag(i);
-
-						 i = node->getLocalZOrder();
-						 if (ImGui::DragInt("Z Order", &i))
-							 node->setLocalZOrder(i);
-
-						 b = node->isVisible();
-						 if (ImGui::Checkbox("Visible", &b))
-							 node->setVisible(b);
-
-						 b = node->getCastShadow();
-						 if (ImGui::Checkbox("Cast Shadow", &b))
-							 node->setCastShadow(b);
-
-						 b = node->getRecieveShadow();
-						 if (ImGui::Checkbox("Recieve Shadow", &b))
-							 node->setRecieveShadow(b);
-
-						 ImGui::EndTabItem();
-					 }
-
-					 if (ImGui::BeginTabItem("Color"))
-					 {
-						 Color3B color = node->getColor();
-						 v[0] = color.r / 255.0f;
-						 v[1] = color.g / 255.0f;
-						 v[2] = color.b / 255.0f;
-						 v[3] = node->getOpacity() / 255.0f;
-						 if (ImGui::ColorEdit4("Color", v))
-						 {
-							 color.r = static_cast<GLubyte>(v[0] * 255);
-							 color.g = static_cast<GLubyte>(v[1] * 255);
-							 color.b = static_cast<GLubyte>(v[2] * 255);
-							 node->setColor(color);
-							 node->setOpacity(static_cast<GLubyte>(v[3] * 255));
-						 }
-
-						 BlendProtocol* blendNode = dynamic_cast<BlendProtocol*>(node);
-						 if (blendNode)
-						 {
-							 const char* factorItems[] = {
-								 "ZERO",
-								 "ONE",
-								 "SRC_COLOR",
-								 "ONE_MINUS_SRC_COLOR",
-								 "SRC_ALPHA",
-								 "ONE_MINUS_SRC_ALPHA",
-								 "DST_COLOR",
-								 "ONE_MINUS_DST_COLOR",
-								 "DST_ALPHA",
-								 "ONE_MINUS_DST_ALPHA"
-							 };
-
-							 const GLenum factors[] = {
-								 GL_ZERO,
-								 GL_ONE,
-								 GL_SRC_COLOR,
-								 GL_ONE_MINUS_SRC_COLOR,
-								 GL_SRC_ALPHA,
-								 GL_ONE_MINUS_SRC_ALPHA,
-								 GL_DST_COLOR,
-								 GL_ONE_MINUS_DST_COLOR,
-								 GL_DST_ALPHA,
-								 GL_ONE_MINUS_DST_ALPHA
-							 };
-
-							 BlendFunc blendFunc = blendNode->getBlendFunc();
-							 i = distance(factors, find(begin(factors), end(factors), blendFunc.src));
-							 j = distance(factors, find(begin(factors), end(factors), blendFunc.dst));
-							 if (ImGui::Combo("Blend Src", &i, factorItems, IM_ARRAYSIZE(factorItems)) ||
-								 ImGui::Combo("Blend Dst", &j, factorItems, IM_ARRAYSIZE(factorItems))
-								 )
-							 {
-								 blendFunc.src = factors[i];
-								 blendFunc.dst = factors[j];
-								 blendNode->setBlendFunc(blendFunc);
-							 }
-						 }
-
-						 b = node->isCascadeColorEnabled();
-						 if (ImGui::Checkbox("Cascade Color Enabled", &b))
-							 node->setCascadeColorEnabled(b);
-
-						 b = node->isCascadeOpacityEnabled();
-						 if (ImGui::Checkbox("Cascade Opacity Enabled", &b))
-							 node->setCascadeOpacityEnabled(b);
-
-						 b = node->isOpacityModifyRGB();
-						 if (ImGui::Checkbox("Is Opacity Modify RGB", &b))
-							 node->setOpacityModifyRGB(b);
-
-						 ImGui::EndTabItem();
-					 }
-
-					 if (auto light = dynamic_cast<BaseLight*>(node))
-					 {
-						 if (ImGui::BeginTabItem("Light"))
-						 {
-							 b = light->isEnabled();
-							 if (ImGui::Checkbox("Enabled", &b))
-								 light->setEnabled(b);
-
-							 v[0] = light->getIntensity();
-							 if (ImGui::DragFloat("Intensity", v, 0.01f, 0.0f, 1.0f))
-								 light->setIntensity(v[0]);
-
-							 const char* lightFlagItems[] = {
-								 "LIGHT0",
-								 "LIGHT1",
-								 "LIGHT2",
-								 "LIGHT3",
-								 "LIGHT4",
-								 "LIGHT5",
-								 "LIGHT6",
-								 "LIGHT7",
-								 "LIGHT8",
-								 "LIGHT9",
-								 "LIGHT10",
-								 "LIGHT11",
-								 "LIGHT12",
-								 "LIGHT13",
-								 "LIGHT14",
-								 "LIGHT15",
-							 };
-
-							 const int lightFlags[] = {
-								 (int)LightFlag::LIGHT0,
-								 (int)LightFlag::LIGHT1,
-								 (int)LightFlag::LIGHT2,
-								 (int)LightFlag::LIGHT3,
-								 (int)LightFlag::LIGHT4,
-								 (int)LightFlag::LIGHT5,
-								 (int)LightFlag::LIGHT6,
-								 (int)LightFlag::LIGHT7,
-								 (int)LightFlag::LIGHT8,
-								 (int)LightFlag::LIGHT9,
-								 (int)LightFlag::LIGHT10,
-								 (int)LightFlag::LIGHT11,
-								 (int)LightFlag::LIGHT12,
-								 (int)LightFlag::LIGHT13,
-								 (int)LightFlag::LIGHT14,
-								 (int)LightFlag::LIGHT15,
-							 };
-
-							 i = distance(lightFlags, find(begin(lightFlags), end(lightFlags), (int)light->getLightFlag()));
-							 if (ImGui::Combo("LightFlag", &i, lightFlagItems, IM_ARRAYSIZE(lightFlagItems)))
-							 {
-								 light->setLightFlag(static_cast<LightFlag>(lightFlags[i]));
-							 }
-
-							 const char* shadowSizeItems[] = {
-								 "Low_256x256",
-								 "Medium_512x512",
-								 "High_1024x1024",
-								 "Ultra_2048x2048"
-							 };
-
-							 const int shadowSizes[] = {
-								 (int)ShadowSize::Low_256x256,
-								 (int)ShadowSize::Medium_512x512,
-								 (int)ShadowSize::High_1024x1024,
-								 (int)ShadowSize::Ultra_2048x2048,
-							 };
-
-							 i = distance(shadowSizes, find(begin(shadowSizes), end(shadowSizes), (int)light->getShadowMapSize()));
-							 if (ImGui::Combo("Shadow Map Size", &i, shadowSizeItems, IM_ARRAYSIZE(shadowSizeItems)))
-							 {
-								 light->setShadowMapSize(static_cast<ShadowSize>(shadowSizes[i]));
-							 }
-
-							 v[0] = light->getShadowBias();
-							 if (ImGui::DragFloat("Shadow Bias", v, 0.001f))
-								 light->setShadowBias(v[0]);
-
-							 ImGui::EndTabItem();
-						 }
-					 }
-
-					 ImGui::EndTabBar();
-				 }
-			 }
+						
+						ImGuiNodeProcessor::getInstance()->render(node);
+						
+					}
         }
         ImGui::End();
     }
 
-    static CCImGuiWidgets::ImGuiWidgetManager::AutoRegister<CCImGuiWidgets::ImGuiNodeProperties> s_imGuiNodePropertiesRegister(
+    static CCImGuiWidgets::ImGuiWidgetManager::WidgetRegister<CCImGuiWidgets::ImGuiNodeProperties> s_imGuiNodePropertiesRegister(
         "CCImGuiWidgets.ImGuiNodeProperties",
         "Node Properties",
         {}

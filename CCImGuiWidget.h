@@ -17,8 +17,8 @@ namespace CCImGuiWidgets
         const std::string& getName() const {return _name;}
         const std::string& getDescription() const {return _description;}
         const std::vector<std::string>& getDependencies() const {return _dependencies;}
-        bool isLoaded() const {return _loaded;}
-
+        bool isLoaded() const { return _loaded; }
+        bool isVisible() const { return _visible; }
     private:
         virtual void onLoad();
         virtual void onUnload();
@@ -29,6 +29,8 @@ namespace CCImGuiWidgets
         std::string _description;
         std::vector<std::string> _dependencies;
         bool _loaded = false;
+    protected:
+        bool _visible = true;
     };
 }
 

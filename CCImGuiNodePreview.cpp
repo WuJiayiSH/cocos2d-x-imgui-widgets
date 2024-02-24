@@ -6,15 +6,14 @@ namespace CCImGuiWidgets
 {
     void ImGuiNodePreview::draw()
     {
-		bool open = true;
-         if (ImGui::Begin("Preview", &open))
+        if (ImGui::Begin("Preview", &_visible))
         {
             
         }
         ImGui::End();
     }
 
-    static CCImGuiWidgets::ImGuiWidgetManager::AutoRegister<CCImGuiWidgets::ImGuiNodePreview> s_imGuiNodePreviewRegister(
+    static CCImGuiWidgets::ImGuiWidgetManager::WidgetRegister<CCImGuiWidgets::ImGuiNodePreview> s_imGuiNodePreviewRegister(
         "CCImGuiWidgets.ImGuiNodePreview",
         "Preview",
         {}

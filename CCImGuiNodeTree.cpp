@@ -81,7 +81,7 @@ namespace CCImGuiWidgets
         ImGui::End();
     }
 
-    static CCImGuiWidgets::ImGuiWidgetManager::AutoRegister<CCImGuiWidgets::ImGuiNodeTree> s_imGuiNodeTreeRegister(
+    static CCImGuiWidgets::ImGuiWidgetManager::WidgetRegister<CCImGuiWidgets::ImGuiNodeTree> s_imGuiNodeTreeRegister(
         "CCImGuiWidgets.ImGuiNodeTree",
         "Node Tree",
         {}

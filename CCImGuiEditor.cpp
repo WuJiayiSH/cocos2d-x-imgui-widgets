@@ -74,7 +74,7 @@ namespace CCImGuiWidgets
         ImGui::End();
     }
 
-    static CCImGuiWidgets::ImGuiWidgetManager::AutoRegister<CCImGuiWidgets::ImGuiEditor> s_imGuiEditorRegister(
+    static CCImGuiWidgets::ImGuiWidgetManager::WidgetRegister<CCImGuiWidgets::ImGuiEditor> s_imGuiEditorRegister(
         "CCImGuiWidgets.ImGuiEditor",
         "Root Editor",
         {}

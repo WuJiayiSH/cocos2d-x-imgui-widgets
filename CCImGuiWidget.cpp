@@ -8,7 +8,8 @@ namespace CCImGuiWidgets
     {
         CCIMGUI::getInstance()->addCallback([this]()
         {
-            draw();
+			if (_visible)
+				draw();
         }, getName());
     }
 

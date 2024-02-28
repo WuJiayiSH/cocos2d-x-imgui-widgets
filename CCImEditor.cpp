@@ -1,9 +1,10 @@
-#include "CCImGuiEditor.h"
-#include "CCImGuiWidgetManager.h"
+#include "CCImEditor.h"
+#include "CCImWidgetManager.h"
 #include "CCIMGUI.h"
-namespace CCImGuiWidgets
+
+namespace CCImWidgets
 {
-    void ImGuiEditor::draw()
+    void CCImEditor::draw()
     {
         static bool open = true;;
        bool* p_open = &open;
@@ -74,8 +75,8 @@ namespace CCImGuiWidgets
         ImGui::End();
     }
 
-    static CCImGuiWidgets::ImGuiWidgetManager::WidgetRegister<CCImGuiWidgets::ImGuiEditor> s_imGuiEditorRegister(
-        "CCImGuiWidgets.ImGuiEditor",
+    static CCImWidgetManager::WidgetRegister<CCImEditor> s_CCImEditorRegister(
+        "CCImGuiWidgets.CCImEditor",
         "Root Editor",
         {}
     );

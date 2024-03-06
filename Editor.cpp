@@ -1,13 +1,35 @@
-#include "CCImEditor.h"
-#include "CCImWidgetManager.h"
+#include "Editor.h"
+#include "WidgetFactory.h"
+#include "WidgetManager.h"
 #include "CCIMGUI.h"
 
 namespace CCImWidgets
 {
-    void CCImEditor::draw()
+    Editor::Editor()
+    {
+        CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "Editor");
+
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
+WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
+        
+    }
+    
+    Editor::~Editor()
+    {
+        CCIMGUI::getInstance()->removeCallback("Editor");
+    }
+
+    Editor* Editor::getInstance()
+    {
+        static Editor* instance = new Editor();
+        return instance;
+    }
+
+    void Editor::draw()
     {
         static bool open = true;;
-       bool* p_open = &open;
+        bool* p_open = &open;
         static bool opt_fullscreen = true;
         static bool opt_padding = false;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -52,12 +74,10 @@ namespace CCImWidgets
 
         // Submit the DockSpace
         ImGuiIO& io = ImGui::GetIO();
-    
-    {
+
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-    }
-    
+
 
 
         if (ImGui::BeginMenuBar())
@@ -67,19 +87,23 @@ namespace CCImWidgets
                
                 ImGui::EndMenu();
             }
-            
 
+            if (ImGui::BeginMenu("Layout"))
+            {
+               
+                ImGui::EndMenu();
+            }
+            
+            if (ImGui::BeginMenu("Widget"))
+            {
+             
+                ImGui::EndMenu();
+            }
             ImGui::EndMenuBar();
         }
 
         ImGui::End();
     }
-
-    static CCImWidgetManager::WidgetRegister<CCImEditor> s_CCImEditorRegister(
-        "CCImGuiWidgets.CCImEditor",
-        "Root Editor",
-        {}
-    );
 }
 
 

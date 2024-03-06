@@ -1,23 +1,27 @@
 
 file(GLOB_RECURSE CCIMGUI_WIDGETS_SRC
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidgetManager.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiEditor.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodeTree.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodeProperties.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodePreview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/Widget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetManager.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/Preview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/Editor.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeTree.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeProperties.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/TypeWarpper.cpp
 )
 
 file(GLOB_RECURSE CCIMGUI_WIDGETS_HEADER
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidgets.h
+    ${CMAKE_CURRENT_LIST_DIR}/CCImWidgets.h
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidget.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidgetManager.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiEditor.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodeTree.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodeProperties.h
-    ${CMAKE_CURRENT_LIST_DIR}/CCImGuiNodePreview.h
+    ${CMAKE_CURRENT_LIST_DIR}/Widget.h
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetManager.h
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.h
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/Preview.h
+    ${CMAKE_CURRENT_LIST_DIR}/Editor.h
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeTree.h
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeProperties.h
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/TypeWarpper.h
 )
 
 list(LENGTH FAIRYGUI_SRC FAIRYGUI_SRC_LENGTH)

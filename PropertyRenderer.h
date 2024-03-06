@@ -2,7 +2,7 @@
 #define __CCIMNODETREE_H__
 
 #include <string>
-#include "CCImWidget.h"
+#include "Widget.h"
 #include "cocos2d.h"
 
 namespace CCImWidgets

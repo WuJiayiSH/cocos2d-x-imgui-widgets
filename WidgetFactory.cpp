@@ -1,6 +1,6 @@
 #include "WidgetFactory.h"
 #include "CCIMGUI.h"
-
+#include <inttypes.h>
 namespace CCImWidgets
 {
     
@@ -17,14 +17,14 @@ namespace CCImWidgets
         {
             WidgetCreator& creator = it->second;
             Widget* widget = creator._ctor();
-            std::string name = creator._name;
             std::string displayName = creator._displayName;
             if (creator._count > 0)
             {
-                name = name + "/" + creator._count;
-             //   displayName = displayName + '(' + creator._count +')';
+				char postfix[16];
+				sprintf(postfix, " (%" PRIu32 ")", creator._count);
+				displayName.append(postfix);
             }
-            if (widget && widget->init(std::move(name), std::move(displayName)))
+            if (widget && widget->init(creator._name, displayName))
             {
                 creator._count ++;
                 return widget;

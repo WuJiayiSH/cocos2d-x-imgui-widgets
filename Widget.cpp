@@ -14,14 +14,14 @@ namespace CCImWidgets
     
     Widget::~Widget()
     {
-        CCIMGUI::getInstance()->removeCallback(_name);
+        CCIMGUI::getInstance()->removeCallback(_displayName);
     }
 
     bool Widget::init(const std::string& name, const std::string& displayName)
     {
         _name = name;
         _displayName = displayName;
-        CCIMGUI::getInstance()->addCallback(std::bind(&Widget::callback, this), _name);
+        CCIMGUI::getInstance()->addCallback(std::bind(&Widget::callback, this), _displayName);
         return true;
     }
 

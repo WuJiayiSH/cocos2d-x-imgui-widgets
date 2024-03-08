@@ -2,23 +2,18 @@
 #define __CCIMWIDGETS_PREVIEW_H__
 
 #include <string>
-#include "Widget.h"
+#include "NodeVisistor.h"
 
 namespace CCImWidgets
 {
-    class Node2D: public Node
+    class Node2D: public NodeVisistor
     {
     private:
-        void draw() override;
+        void visit() override;
     };
 
-    namespace
-    {
-        static NodeFactory::AutoRegister<NodeProperties> s_register(
-            "CCImWidgets.Node2D",
-            "2D/Node2D"
-        );
-    }
+    
+
 }
 
 #endif

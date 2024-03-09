@@ -11,14 +11,14 @@ namespace CCImWidgets
 {
     class NodeFactory : public cocos2d::Ref
     {
-    private:
+	public:
         struct NodeCreator
         {
             std::string _name;
             std::string _displayName;
             std::function<bool(cocos2d::Node**)> _ctor;
 		};
-    public:
+    
         template <typename T>
         struct AutoRegister
         {

@@ -13,7 +13,7 @@ namespace CCImWidgets
 {
     class WidgetFactory : public cocos2d::Ref
     {
-    private:
+    public:
         struct WidgetCreator
         {
             std::string _name;
@@ -21,7 +21,7 @@ namespace CCImWidgets
             std::function<Widget*()> _ctor;
             uint32_t _count;
 		};
-    public:
+    
         template <typename T>
         struct AutoRegister
         {
@@ -35,6 +35,7 @@ namespace CCImWidgets
             }
         };
 
+        const std::unordered_map<std::string, WidgetCreator>& getCreators() { return _widgetCreators; };
         Widget* createWidget(const std::string& name);
         
         static WidgetFactory* getInstance();

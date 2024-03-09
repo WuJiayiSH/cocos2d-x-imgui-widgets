@@ -6,13 +6,50 @@
 
 namespace CCImWidgets
 {
+    namespace
+    {
+        void drawMenuItem(const std::string& displayName, const std::function<void()> callback)
+        {
+            size_t start = 0;
+            size_t end = displayName.find("/", start);
+
+            size_t depth = 0;
+            bool isMenuOpened = true;
+            while (end != std::string::npos && isMenuOpened)
+            {
+                if (ImGui::BeginMenu(displayName.substr(start, end).c_str()))
+                {
+                    depth++;
+                    start = end + 1;
+                    end = displayName.find("/", start);
+                }
+                else
+                {
+                    isMenuOpened = false;
+                }
+            }
+            
+            if (isMenuOpened)
+            {
+                if (ImGui::MenuItem(displayName.substr(start).c_str()))
+                {
+					callback();
+                }
+            }
+
+            while (depth-- > 0)
+            {
+                ImGui::EndMenu();
+            }
+        }
+    }
     Editor::Editor()
     {
         CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "Editor");
 
         WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
         WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
-WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
         
     }
     
@@ -85,39 +122,12 @@ WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
         {
             if (ImGui::BeginMenu("Add"))
             {
-                for (const auto& p : NodeFactory::getInstance()->getCreators())
+                for (const auto& pair : NodeFactory::getInstance()->getCreators())
                 {
-                    const std::string& displayName = p.second._displayName;
-                    size_t start = 0;
-                    size_t end = displayName.find("/", start);
-					size_t depth = 0;
-                    bool isMenuOpened = true;
-                    while (end != std::string::npos && isMenuOpened)
-                    {
-						if (ImGui::BeginMenu(displayName.substr(start, end).c_str()))
-						{
-							depth++;
-                            start = end + 1;
-                            end = displayName.find("/", start);
-						}
-                        else
-                        {
-							isMenuOpened = false;
-                        }
-                    }
-					
-                    if (isMenuOpened)
-                    {
-                        if (ImGui::MenuItem(displayName.substr(start).c_str()))
-                        {
-                            NodeFactory::getInstance()->createNode(p.first);
-                        }
-                    }
-
-                    while (depth-- > 0)
-                    {
-                        ImGui::EndMenu();
-                    }
+                    const NodeFactory::NodeCreator& creator = pair.second;
+                    drawMenuItem(creator._displayName, [&creator]{
+                        NodeFactory::getInstance()->createNode(creator._name);
+					});
                 }
                 ImGui::EndMenu();
             }
@@ -130,7 +140,13 @@ WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
             
             if (ImGui::BeginMenu("Widget"))
             {
-             
+                for (const auto& pair : WidgetFactory::getInstance()->getCreators())
+                {
+                    const WidgetFactory::WidgetCreator& creator = pair.second;
+                    drawMenuItem(creator._displayName, [&creator]{
+                        WidgetFactory::getInstance()->createWidget(creator._name);
+					});
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();

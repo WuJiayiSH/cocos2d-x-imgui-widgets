@@ -22,7 +22,7 @@ namespace CCImWidgets
 		if (_currentCreating.empty())
 			return;
 
-        NodeCreator& creator = _NodeCreators[_currentCreating];
+        NodeCreator& creator = _nodeCreators[_currentCreating];
 
 		cocos2d::Node *p;
 		if (creator._ctor(&p))

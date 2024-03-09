@@ -17,7 +17,6 @@ namespace CCImWidgets
             std::string _name;
             std::string _displayName;
             std::function<bool(cocos2d::Node**)> _ctor;
-            uint32_t _count;
 		};
     public:
         template <typename T>
@@ -25,21 +24,20 @@ namespace CCImWidgets
         {
             AutoRegister(const char* name, const char* displayName, const std::function<bool(cocos2d::Node**)>& ctor)
             {
-                NodeCreator& creator = NodeFactory::getInstance()->_NodeCreators[name];
+                NodeCreator& creator = NodeFactory::getInstance()->_nodeCreators[name];
                 creator._name = name;
                 creator._displayName = displayName;
-				        creator._ctor = ctor;
-                creator._count = 0;
+				creator._ctor = ctor;
             }
         };
 
-        const std::unordered_map<std::string, NodeCreator>& getCreators() { return _NodeCreators; };
+        const std::unordered_map<std::string, NodeCreator>& getCreators() { return _nodeCreators; };
 		void createNode(const std::string& name);
         
         static NodeFactory* getInstance();
 
     private:
-        std::unordered_map<std::string, NodeCreator> _NodeCreators;
+        std::unordered_map<std::string, NodeCreator> _nodeCreators;
         void draw();
         std::string _currentCreating;
     };

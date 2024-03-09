@@ -85,13 +85,40 @@ WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
         {
             if (ImGui::BeginMenu("Add"))
             {
-               for (const auto& p : NodeFactory::getInstance()->getCreators())
-               {
-                if (ImGui::MenuItem(p.second._displayName.c_str()))
+                for (const auto& p : NodeFactory::getInstance()->getCreators())
                 {
-NodeFactory::getInstance()->createNode(p.first);
+                    const std::string& displayName = p.second._displayName;
+                    size_t start = 0;
+                    size_t end = displayName.find("/", start);
+					size_t depth = 0;
+                    bool isMenuOpened = true;
+                    while (end != std::string::npos && isMenuOpened)
+                    {
+						if (ImGui::BeginMenu(displayName.substr(start, end).c_str()))
+						{
+							depth++;
+                            start = end + 1;
+                            end = displayName.find("/", start);
+						}
+                        else
+                        {
+							isMenuOpened = false;
+                        }
+                    }
+					
+                    if (isMenuOpened)
+                    {
+                        if (ImGui::MenuItem(displayName.substr(start).c_str()))
+                        {
+                            NodeFactory::getInstance()->createNode(p.first);
+                        }
+                    }
+
+                    while (depth-- > 0)
+                    {
+                        ImGui::EndMenu();
+                    }
                 }
-               }
                 ImGui::EndMenu();
             }
 

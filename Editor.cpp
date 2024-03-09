@@ -1,4 +1,5 @@
 #include "Editor.h"
+#include "NodeFactory.h"
 #include "WidgetFactory.h"
 #include "WidgetManager.h"
 #include "CCIMGUI.h"
@@ -84,7 +85,13 @@ WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
         {
             if (ImGui::BeginMenu("Add"))
             {
-               
+               for (const auto& p : NodeFactory::getInstance()->getCreators())
+               {
+                if (ImGui::MenuItem(p.second._displayName.c_str()))
+                {
+NodeFactory::getInstance()->createNode(p.first);
+                }
+               }
                 ImGui::EndMenu();
             }
 
@@ -102,7 +109,11 @@ WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
             ImGui::EndMenuBar();
         }
 
+        
+
         ImGui::End();
+
+        
     }
 }
 

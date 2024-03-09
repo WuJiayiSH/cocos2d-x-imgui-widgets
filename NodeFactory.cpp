@@ -10,7 +10,30 @@ namespace CCImWidgets
         return instance;
     }
 
-    Node* NodeFactory::createNode(const std::string& name)
+    void NodeFactory::createNode(const std::string& name)
+    {
+        _currentCreating = name;
+
+        CCIMGUI::getInstance()->addCallback(std::bind(&NodeFactory::draw, this), _currentCreating);
+    }
+
+    void NodeFactory::draw()
+    {
+		if (_currentCreating.empty())
+			return;
+
+        NodeCreator& creator = _NodeCreators[_currentCreating];
+
+		cocos2d::Node *p;
+		if (creator._ctor(&p))
+		{
+			cocos2d::Director::getInstance()->getRunningScene()->addChild(p);
+			_currentCreating.clear();
+		}
+
+		
+    }
+/*    Node* NodeFactory::createNode(const std::string& name)
     {
         std::unordered_map<std::string, NodeCreator>::iterator it = _nodeCreators.find(name);
         if (it != _nodeCreators.end())
@@ -33,5 +56,5 @@ namespace CCImWidgets
         }
         
         return nullptr;
-    }
+    }*/
 }

@@ -2,14 +2,13 @@
 #define __CCIMWIDGETS_PREVIEW_H__
 
 #include <string>
-#include "NodeVisistor.h"
+#include "NodeVisitor.h"
 
 namespace CCImWidgets
 {
-    class Node2D: public NodeVisistor
+    class Node2D: public NodeVisitor
     {
-    private:
-        void visit() override;
+    
     };
 
     

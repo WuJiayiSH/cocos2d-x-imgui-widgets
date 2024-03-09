@@ -2,7 +2,6 @@
 file(GLOB_RECURSE CCIMGUI_WIDGETS_SRC
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.cpp
     ${CMAKE_CURRENT_LIST_DIR}/Widget.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/WidgetManager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.cpp
     ${CMAKE_CURRENT_LIST_DIR}/widgets/Preview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/Editor.cpp
@@ -16,7 +15,6 @@ file(GLOB_RECURSE CCIMGUI_WIDGETS_HEADER
     ${CMAKE_CURRENT_LIST_DIR}/CCImWidgets.h
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.h
     ${CMAKE_CURRENT_LIST_DIR}/Widget.h
-    ${CMAKE_CURRENT_LIST_DIR}/WidgetManager.h
     ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.h
     ${CMAKE_CURRENT_LIST_DIR}/widgets/Preview.h
     ${CMAKE_CURRENT_LIST_DIR}/Editor.h

@@ -1,7 +1,6 @@
-#ifndef __CCIMWIDGETS_PREVIEW_H__
-#define __CCIMWIDGETS_PREVIEW_H__
+#ifndef __CCIMWIDGETS_NODE2D_H__
+#define __CCIMWIDGETS_NODE2D_H__
 
-#include <string>
 #include "NodeVisitor.h"
 
 namespace CCImWidgets
@@ -10,9 +9,6 @@ namespace CCImWidgets
     {
     
     };
-
-    
-
 }
 
 #endif

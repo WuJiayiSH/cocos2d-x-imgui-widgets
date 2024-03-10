@@ -9,12 +9,22 @@ namespace CCImWidgets
     class Editor: public cocos2d::Ref
     {
     public:
+        static Editor* getInstance();
+
+        Ref* getUserObject(const std::string& path) { return _userObjects[path]; };
+        
+        void setUserObject(const std::string& path, Ref* handle) { _userObjects[path] = handle; };
+
+    private:
         Editor();
         ~Editor();
+        
+        Editor(const Editor&) = delete;
+        void operator=(const Editor&) = delete;
 
-        static Editor* getInstance();
-    private:
-        void draw() ;
+        void draw();
+
+        std::unordered_map<std::string, cocos2d::WeakPtr<Ref>> _userObjects;
     };
 }
 

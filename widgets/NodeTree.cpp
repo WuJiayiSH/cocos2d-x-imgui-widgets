@@ -1,6 +1,6 @@
 #include "NodeTree.h"
 #include "WidgetFactory.h"
-#include "WidgetManager.h"
+#include "Editor.h"
 #include "CCIMGUI.h"
 #include "cocos2d.h"
 
@@ -64,9 +64,9 @@ namespace CCImWidgets
     void NodeTree::draw()
     {
         static const std::string path = "CCImGuiWidgets.ImGuiNodeTree.SelectedNode";
-        s_selectedNode = dynamic_cast<Node*>(WidgetManager::getInstance()->getUserObject(path));
+        s_selectedNode = dynamic_cast<Node*>(Editor::getInstance()->getUserObject(path));
         drawNode(Director::getInstance()->getRunningScene());
-		WidgetManager::getInstance()->setUserObject(path, s_selectedNode);
+		Editor::getInstance()->setUserObject(path, s_selectedNode);
     
     }
 
@@ -74,7 +74,7 @@ namespace CCImWidgets
     {
         static WidgetFactory::AutoRegister<NodeTree> s_register(
             "CCImWidgets.NodeTree",
-            "Node Tree"
+            "Built-in/Node Tree"
         );
     }
 }

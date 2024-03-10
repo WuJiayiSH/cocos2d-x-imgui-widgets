@@ -1,6 +1,5 @@
 #include "NodeProperties.h"
 #include "WidgetFactory.h"
-#include "WidgetManager.h"
 #include "CCIMGUI.h"
 #include "cocos2d.h"
 #include "PropertyRenderer.h"
@@ -13,10 +12,10 @@ namespace CCImWidgets
     void NodeProperties::draw()
     {
 		
-        if (Node* node = dynamic_cast<Node*>(WidgetManager::getInstance()->getUserObject("CCImGuiWidgets.ImGuiNodeTree.SelectedNode")))
-        {
-            // NodeProcessor::getInstance()->render(node);
-        }
+        // if (Node* node = dynamic_cast<Node*>(WidgetManager::getInstance()->getUserObject("CCImGuiWidgets.ImGuiNodeTree.SelectedNode")))
+        // {
+        //     // NodeProcessor::getInstance()->render(node);
+        // }
 
     }
 
@@ -24,7 +23,7 @@ namespace CCImWidgets
     {
         static WidgetFactory::AutoRegister<NodeProperties> s_register(
             "CCImWidgets.NodeProperties",
-            "Node Properties"
+            "Built-in/Node Properties"
         );
     }
 }

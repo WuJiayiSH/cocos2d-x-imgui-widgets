@@ -1,7 +1,6 @@
 #include "Editor.h"
 #include "NodeFactory.h"
 #include "WidgetFactory.h"
-#include "WidgetManager.h"
 #include "CCIMGUI.h"
 
 namespace CCImWidgets
@@ -127,6 +126,7 @@ namespace CCImWidgets
                     const NodeFactory::NodeCreator& creator = pair.second;
                     drawMenuItem(creator._displayName, [&creator]{
                         NodeFactory::getInstance()->createNode(creator._name);
+                        creator._ctor(nullptr);
 					});
                 }
                 ImGui::EndMenu();
@@ -142,9 +142,9 @@ namespace CCImWidgets
             {
                 for (const auto& pair : WidgetFactory::getInstance()->getCreators())
                 {
-                    const WidgetFactory::WidgetCreator& creator = pair.second;
-                    drawMenuItem(creator._displayName, [&creator]{
-                        WidgetFactory::getInstance()->createWidget(creator._name);
+                    const WidgetFactory::Creator& creator = pair.second;
+                    drawMenuItem(creator.getDisplayName(), [&creator]{
+                        WidgetFactory::getInstance()->createWidget(creator.getName());
 					});
                 }
                 ImGui::EndMenu();

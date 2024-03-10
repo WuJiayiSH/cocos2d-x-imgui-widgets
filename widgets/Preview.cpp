@@ -1,6 +1,5 @@
 #include "Preview.h"
 #include "WidgetFactory.h"
-#include "WidgetManager.h"
 #include "CCIMGUI.h"
 
 namespace CCImWidgets
@@ -14,7 +13,7 @@ namespace CCImWidgets
     {
         static WidgetFactory::AutoRegister<Preview> s_register(
             "CCImWidgets.Preview",
-            "Preview"
+            "Built-in/Preview"
         );
     }
 }

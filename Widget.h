@@ -11,18 +11,19 @@ namespace CCImWidgets
     class Widget: public cocos2d::Ref
     {
     public:
-        friend class WidgetManager;
         friend class WidgetFactory;
 
+        const std::string& getName() const {return _name;}
+
+        const std::string& getDisplayName() const {return _displayName;}
+
+    protected:
         Widget();
         virtual ~Widget();
 
-        bool init(const std::string& name, const std::string& displayName);
-
-        const std::string& getName() const {return _name;}
-        const std::string& getDisplayName() const {return _displayName;}
-
     private:
+        bool init(const std::string& name, const std::string& displayName, size_t count);
+
         void callback();
         virtual void draw() = 0;
 

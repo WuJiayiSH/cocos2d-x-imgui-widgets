@@ -5,11 +5,25 @@
 
 namespace CCImWidgets
 {
+    void Node2D::draw() 
+    {
+        property("Position", 
+            [](cocos2d::Node* node) -> cocos2d::Vec3 {return node->getPosition3D(); },
+            [](cocos2d::Node* node, const cocos2d::Vec3& pos) -> void {node->setPosition3D(pos); },
+            getOwner());
+    }
+    
     namespace
     {
         bool create(cocos2d::Node** node)
         {
             *node = cocos2d::Node::create();
+            Node2D* visitor = new Node2D();
+			visitor->init();
+            visitor->autorelease();
+            visitor->setName("CCImWidgets.NodeVisitor");
+			(*node)->addComponent(visitor);
+			(*node)->setName("Node2D");
 			return true;
         }
 

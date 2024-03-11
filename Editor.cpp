@@ -46,6 +46,10 @@ namespace CCImWidgets
     Editor::Editor()
     {
         CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "Editor");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.Preview");
+        
     }
     
     Editor::~Editor()

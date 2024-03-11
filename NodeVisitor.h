@@ -7,6 +7,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "PropertyRenderer.h"
+
 namespace CCImWidgets
 {
     class NodeVisitor : public cocos2d::Component
@@ -37,7 +39,22 @@ namespace CCImWidgets
             _context = Context::DESERIALIZE;
             visit();
         };
+        protected:
+        template<typename Getter, typename Setter, typename NodeType, typename... Args>
+        void property(const char* label, Getter&& getter, Setter&& setter, NodeType* node, Args&&... args)
+        {
+            using namespace std;
+            using ValueType = std::remove_cv<std::remove_reference<std::result_of<Getter(NodeType*)>::type>::type>::type;
 
+            if (_context == Context::DRAW)
+            {
+                ValueType val = std::forward<Getter>(getter)(node);
+                if (PropertyRenderer<ValueType>::draw(label, val, std::forward<Args>(args)...))
+                {
+                    std::forward<Setter>(setter)(node, val);
+                }
+            }
+        }
     protected:
         virtual void visit() {};
 

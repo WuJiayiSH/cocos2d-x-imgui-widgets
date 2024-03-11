@@ -7,7 +7,7 @@ namespace CCImWidgets
 {
     class Node2D: public NodeVisitor
     {
-    
+        void draw() override;
     };
 }
 

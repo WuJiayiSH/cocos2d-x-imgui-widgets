@@ -2,6 +2,7 @@
 #include "NodeFactory.h"
 #include "WidgetFactory.h"
 #include "CCIMGUI.h"
+#include "CCImGuiLayer.h"
 
 namespace CCImWidgets
 {
@@ -41,86 +42,118 @@ namespace CCImWidgets
                 ImGui::EndMenu();
             }
         }
+
+        void drawDockSpace()
+        {
+            ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+            
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+            windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+            
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            bool open = true;
+            ImGui::Begin("CCImWidgets.Editor", &open, windowFlags);
+            ImGui::PopStyleVar();
+            
+            ImGui::PopStyleVar(2);
+
+            ImGuiID dockspaceId = ImGui::GetID("CCImWidgets.Editor.DockSpace");
+            ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::BeginMenu("Add"))
+                {
+                    for (const auto& pair : NodeFactory::getInstance()->getCreators())
+                    {
+                        const NodeFactory::NodeCreator& creator = pair.second;
+                        drawMenuItem(creator._displayName, [&creator]{
+                            NodeFactory::getInstance()->createNode(creator._name);
+                        });
+                    }
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Layout"))
+                {
+                    ImGui::EndMenu();
+                }
+                
+                if (ImGui::BeginMenu("Widget"))
+                {
+                    for (const auto& pair : WidgetFactory::getInstance()->getCreators())
+                    {
+                        const WidgetFactory::Creator& creator = pair.second;
+                        drawMenuItem(creator.getDisplayName(), [&creator]{
+                            WidgetFactory::getInstance()->createWidget(creator.getName());
+                        });
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenuBar();
+            }
+
+            ImGui::End();
+        }
     }
 
     Editor::Editor()
     {
-        CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "Editor");
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.Preview");
-        
     }
     
     Editor::~Editor()
     {
-        CCIMGUI::getInstance()->removeCallback("Editor");
     }
 
     Editor* Editor::getInstance()
     {
-        static Editor* instance = new Editor();
+        static Editor* instance = nullptr;
+
+        if (!instance)
+        {
+            instance = new (std::nothrow) Editor();
+            instance->init();
+        }
+
         return instance;
     }
 
-    void Editor::draw()
+    bool Editor::init()
     {
-        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-        
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
-        ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        bool open = true;
-        ImGui::Begin("CCImWidgets.Editor", &open, windowFlags);
-        ImGui::PopStyleVar();
-        
-        ImGui::PopStyleVar(2);
+        setName("EditorSupport");
+        setLocalZOrder(INT_MAX);
 
-        ImGuiID dockspaceId = ImGui::GetID("CCImWidgets.Editor.DockSpace");
-        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-        if (ImGui::BeginMenuBar())
+        if (ImGuiLayer* layer = ImGuiLayer::create())
         {
-            if (ImGui::BeginMenu("Add"))
-            {
-                for (const auto& pair : NodeFactory::getInstance()->getCreators())
-                {
-                    const NodeFactory::NodeCreator& creator = pair.second;
-                    drawMenuItem(creator._displayName, [&creator]{
-                        NodeFactory::getInstance()->createNode(creator._name);
-					});
-                }
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Layout"))
-            {
-                ImGui::EndMenu();
-            }
-            
-            if (ImGui::BeginMenu("Widget"))
-            {
-                for (const auto& pair : WidgetFactory::getInstance()->getCreators())
-                {
-                    const WidgetFactory::Creator& creator = pair.second;
-                    drawMenuItem(creator.getDisplayName(), [&creator]{
-                        WidgetFactory::getInstance()->createWidget(creator.getName());
-					});
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
+            addChild(layer, INT_MAX, "ImGuiLayer");
+			return true;
         }
 
-        ImGui::End();
+		return false;
     }
+
+    void Editor::onEnter()
+    {
+        Node::onEnter();
+        CCIMGUI::getInstance()->addCallback(drawDockSpace, "CCImWidgets.Editor");
+
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
+        WidgetFactory::getInstance()->createWidget("CCImWidgets.Preview");
+    }
+
+    void Editor::onExit()
+    {
+        Node::onExit();
+        CCIMGUI::getInstance()->removeCallback("CCImWidgets.Editor");
+    }
+
 }
 
 

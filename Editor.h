@@ -2,11 +2,14 @@
 #define __CCIMWIDGETS_EDITOR_H__
 
 #include <string>
+
+#include "cocos2d.h"
+
 #include "Widget.h"
 
 namespace CCImWidgets
 {
-    class Editor: public cocos2d::Ref
+    class Editor: public cocos2d::Node
     {
     public:
         static Editor* getInstance();
@@ -15,6 +18,9 @@ namespace CCImWidgets
         
         void setUserObject(const std::string& path, Ref* handle) { _userObjects[path] = handle; };
 
+        void onEnter() override;
+        void onExit() override;
+        
     private:
         Editor();
         ~Editor();
@@ -22,9 +28,10 @@ namespace CCImWidgets
         Editor(const Editor&) = delete;
         void operator=(const Editor&) = delete;
 
-        void draw();
-
+        bool init();
         std::unordered_map<std::string, cocos2d::WeakPtr<Ref>> _userObjects;
+
+        
     };
 }
 

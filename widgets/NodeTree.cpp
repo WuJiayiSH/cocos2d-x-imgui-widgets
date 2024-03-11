@@ -63,11 +63,10 @@ namespace CCImWidgets
 
     void NodeTree::draw()
     {
-        static const std::string path = "CCImGuiWidgets.ImGuiNodeTree.SelectedNode";
+        static const std::string path = "CCImGuiWidgets.NodeTree.SelectedNode";
         s_selectedNode = dynamic_cast<Node*>(Editor::getInstance()->getUserObject(path));
         drawNode(Director::getInstance()->getRunningScene());
 		Editor::getInstance()->setUserObject(path, s_selectedNode);
-    
     }
 
     namespace

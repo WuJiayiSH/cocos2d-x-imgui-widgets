@@ -9,22 +9,8 @@ namespace CCImWidgets
     {
         bool create(cocos2d::Node** node)
         {
-            
-            if (!ImGui::IsPopupOpen("CCImWidgets.Node2D"))
-                ImGui::OpenPopup("CCImWidgets.Node2D");
-
-            bool result = false;
-            if (ImGui::BeginPopupModal("CCImWidgets.Node2D", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-            {
-                if (ImGui::Button("Copy \"Hello, world!\" to clipboard"))
-                {
-					*node = cocos2d::Node::create();
-                    result = true;
-                }
-                ImGui::EndPopup();
-            }
-
-			return result;
+            *node = cocos2d::Node::create();
+			return true;
         }
 
         static NodeFactory::AutoRegister<Node2D> s_register(

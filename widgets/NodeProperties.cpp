@@ -3,6 +3,7 @@
 #include "CCIMGUI.h"
 #include "cocos2d.h"
 #include "PropertyRenderer.h"
+#include "Editor.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -11,12 +12,10 @@ namespace CCImWidgets
 {
     void NodeProperties::draw()
     {
-		
-        // if (Node* node = dynamic_cast<Node*>(WidgetManager::getInstance()->getUserObject("CCImGuiWidgets.ImGuiNodeTree.SelectedNode")))
-        // {
-        //     // NodeProcessor::getInstance()->render(node);
-        // }
-
+        if (Node* node = dynamic_cast<Node*>(Editor::getInstance()->getUserObject("CCImGuiWidgets.NodeTree.SelectedNode")))
+        {
+            
+        }
     }
 
     namespace

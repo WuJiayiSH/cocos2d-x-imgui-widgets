@@ -10,7 +10,6 @@ namespace CCImWidgets
 {
     Widget::Widget()
     {
-        
     }
     
     Widget::~Widget()

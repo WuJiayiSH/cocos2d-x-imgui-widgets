@@ -21,9 +21,10 @@ namespace CCImWidgets
         Widget();
         virtual ~Widget();
 
-    private:
-        bool init(const std::string& name, const std::string& displayName, size_t count);
+    
+        virtual bool init(const std::string& name, const std::string& displayName, size_t count);
 
+    private:
         void callback();
         virtual void draw() = 0;
 

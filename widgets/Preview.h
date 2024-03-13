@@ -9,7 +9,7 @@ namespace CCImWidgets
     class Preview: public Widget
     {
     private:
-        void draw() override {};
+        void draw() override;
 
         bool init(const std::string& name, const std::string& displayName, size_t count) override;
 

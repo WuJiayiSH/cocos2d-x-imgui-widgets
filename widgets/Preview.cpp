@@ -19,6 +19,7 @@ namespace CCImWidgets
         experimental::FrameBuffer* fbo = experimental::FrameBuffer::create(1, 512, 512);
         if (!fbo)
             return false;
+
         experimental::RenderTarget* renderTarget = experimental::RenderTarget::create(512, 512);
         if (!renderTarget)
             return false;
@@ -40,6 +41,26 @@ namespace CCImWidgets
 
 
         return true;
+    }
+
+    void Preview::draw()
+    {
+        if (!_camera)
+            return;
+
+        experimental::FrameBuffer* fbo = _camera->getFrameBufferObject();
+        if (!fbo)
+            return;
+
+        experimental::RenderTarget* renderTarget = fbo->getRenderTarget();
+        if (!renderTarget)
+            return;
+
+        Texture2D* texture = renderTarget->getTexture();
+        if (!texture)
+            return;
+        
+        ImGui::Image(texture->getName(), ImVec2(512, 512));
     }
 
     namespace

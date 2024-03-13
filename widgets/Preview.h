@@ -12,6 +12,8 @@ namespace CCImWidgets
         void draw() override {};
 
         bool init(const std::string& name, const std::string& displayName, size_t count) override;
+
+        cocos2d::RefPtr<cocos2d::Camera> _camera;
     };
 }
 

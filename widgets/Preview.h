@@ -13,6 +13,8 @@ namespace CCImWidgets
 
         bool init(const std::string& name, const std::string& displayName, size_t count) override;
 
+        void updateFrameBufferObject(unsigned int width, unsigned int height);
+
         cocos2d::RefPtr<cocos2d::Camera> _camera;
     };
 }

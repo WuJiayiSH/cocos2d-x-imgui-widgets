@@ -12,6 +12,7 @@ namespace CCImWidgets
     {
     public:
         friend class WidgetFactory;
+		friend class Editor;
 
         const std::string& getName() const {return _name;}
 
@@ -27,6 +28,7 @@ namespace CCImWidgets
     private:
         void callback();
         virtual void draw() = 0;
+        virtual void update(float) {};
 
         std::string _name;
         std::string _displayName;

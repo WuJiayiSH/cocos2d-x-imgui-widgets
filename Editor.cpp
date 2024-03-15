@@ -143,9 +143,11 @@ namespace CCImWidgets
         Node::onEnter();
         CCIMGUI::getInstance()->addCallback(drawDockSpace, "CCImWidgets.Editor");
 
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties");
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree");
-        WidgetFactory::getInstance()->createWidget("CCImWidgets.Preview");
+        addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties"));
+        addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree"));
+        addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.Preview"));
+
+		scheduleUpdate();
     }
 
     void Editor::onExit()
@@ -154,6 +156,19 @@ namespace CCImWidgets
         CCIMGUI::getInstance()->removeCallback("CCImWidgets.Editor");
     }
 
+    void Editor::update(float dt)
+    {
+        Node::update(dt);
+        for(Widget* widget : _widgets)
+        {
+            widget->update(dt);
+        }
+    }
+
+    void Editor::addWidget(Widget* widget)
+    {
+        _widgets.push_back(widget);
+    }
 }
 
 

@@ -10,10 +10,11 @@ namespace CCImWidgets
     {
     private:
         void draw() override;
-		void update(float dt);
+		void update(float dt) override;
         bool init(const std::string& name, const std::string& displayName, size_t count) override;
 
         void updateFrameBufferObject(unsigned int width, unsigned int height);
+        cocos2d::Texture2D* getRenderTexture() const;
 
         cocos2d::RefPtr<cocos2d::Camera> _camera;
 		ImVec2 _windowSize;

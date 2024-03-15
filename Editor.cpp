@@ -139,7 +139,7 @@ namespace CCImWidgets
     void Editor::onEnter()
     {
         Node::onEnter();
-        CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "CCImWidgets.Editor");
+        CCIMGUI::getInstance()->addCallback(std::bind(&Editor::callback, this), "CCImWidgets.Editor");
 
         addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties"));
         addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree"));
@@ -154,7 +154,7 @@ namespace CCImWidgets
         CCIMGUI::getInstance()->removeCallback("CCImWidgets.Editor");
     }
 
-    void Editor::draw()
+    void Editor::callback()
     {
         drawDockSpace();
 
@@ -179,7 +179,7 @@ namespace CCImWidgets
     {
         Node::update(dt);
 
-        _widgets.erase(std::remove(_widgets.begin(), _widgets.end(), nullptr));
+        _widgets.erase(std::remove(_widgets.begin(), _widgets.end(), nullptr), _widgets.end());
         for(Widget* widget : _widgets)
         {
             if (widget)

@@ -12,6 +12,9 @@ namespace CCImWidgets
     class Editor: public cocos2d::Node
     {
     public:
+		Editor();
+		~Editor();
+
         static Editor* getInstance();
 
         Ref* getUserObject(const std::string& path) { return _userObjects[path]; };
@@ -23,14 +26,11 @@ namespace CCImWidgets
         void addWidget(Widget* widget);
         
     private:
-        Editor();
-        ~Editor();
-        
         Editor(const Editor&) = delete;
         void operator=(const Editor&) = delete;
 
         bool init() override;
-        void draw();
+        void callback();
         void update(float) override;
 
         std::unordered_map<std::string, cocos2d::WeakPtr<cocos2d::Ref>> _userObjects;

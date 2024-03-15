@@ -19,6 +19,7 @@ namespace CCImWidgets
 			Widget* widget = creator._constructor();
             if (widget && widget->init(creator._name, creator._displayName, creator._count))
             {
+                widget->autorelease();
                 creator._count ++;
                 return widget;
             }

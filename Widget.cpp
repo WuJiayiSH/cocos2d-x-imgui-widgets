@@ -14,7 +14,6 @@ namespace CCImWidgets
     
     Widget::~Widget()
     {
-        CCIMGUI::getInstance()->removeCallback(_displayName);
     }
 
     bool Widget::init(const std::string& name, const std::string& displayName, size_t count)
@@ -36,23 +35,7 @@ namespace CCImWidgets
         char id[16];
         sprintf(id, "%" PRIu32, count);
         _displayName.append(id);
-
-        CCIMGUI::getInstance()->addCallback(std::bind(&Widget::callback, this), _displayName);
         return true;
-    }
-
-    void Widget::callback()
-    {
-        bool open = true;
-       
-        if (ImGui::Begin(_displayName.c_str(), &open))
-        {
-            draw();
-        }
-        ImGui::End();
-      
-        if (!open)
-            autorelease();
     }
 }
 

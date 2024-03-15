@@ -15,18 +15,15 @@ namespace CCImWidgets
 		friend class Editor;
 
         const std::string& getName() const {return _name;}
-
         const std::string& getDisplayName() const {return _displayName;}
 
     protected:
         Widget();
         virtual ~Widget();
 
-    
         virtual bool init(const std::string& name, const std::string& displayName, size_t count);
 
     private:
-        void callback();
         virtual void draw() = 0;
         virtual void update(float) {};
 

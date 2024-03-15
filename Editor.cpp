@@ -113,35 +113,33 @@ namespace CCImWidgets
 
     Editor* Editor::getInstance()
     {
-        static Editor* instance = nullptr;
+        static cocos2d::RefPtr<Editor> instance = nullptr;
 
         if (!instance)
-        {
-            instance = new (std::nothrow) Editor();
-            instance->init();
-        }
+            instance = cocos2d::utils::createHelper(&Editor::init);
 
         return instance;
     }
 
     bool Editor::init()
     {
+        if (!Node::init())
+            return false;
+
+        ImGuiLayer* layer = ImGuiLayer::create();
+        if (!layer)
+            return false;
+
         setName("EditorSupport");
         setLocalZOrder(INT_MAX);
-
-        if (ImGuiLayer* layer = ImGuiLayer::create())
-        {
-            addChild(layer, INT_MAX, "ImGuiLayer");
-			return true;
-        }
-
-		return false;
+        addChild(layer, INT_MAX, "ImGuiLayer");
+		return true;
     }
 
     void Editor::onEnter()
     {
         Node::onEnter();
-        CCIMGUI::getInstance()->addCallback(drawDockSpace, "CCImWidgets.Editor");
+        CCIMGUI::getInstance()->addCallback(std::bind(&Editor::draw, this), "CCImWidgets.Editor");
 
         addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeProperties"));
         addWidget(WidgetFactory::getInstance()->createWidget("CCImWidgets.NodeTree"));
@@ -156,12 +154,36 @@ namespace CCImWidgets
         CCIMGUI::getInstance()->removeCallback("CCImWidgets.Editor");
     }
 
+    void Editor::draw()
+    {
+        drawDockSpace();
+
+        for(cocos2d::RefPtr<Widget>& widget : _widgets)
+        {
+            if (!widget)
+                continue;
+
+            bool open = true;
+            if (ImGui::Begin(widget->getDisplayName().c_str(), &open))
+            {
+                widget->draw();
+            }
+            ImGui::End();
+        
+            if (!open)
+                widget = nullptr;
+        }
+    }
+
     void Editor::update(float dt)
     {
         Node::update(dt);
+
+        _widgets.erase(std::remove(_widgets.begin(), _widgets.end(), nullptr));
         for(Widget* widget : _widgets)
         {
-            widget->update(dt);
+            if (widget)
+                widget->update(dt);
         }
     }
 

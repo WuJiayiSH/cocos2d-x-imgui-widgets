@@ -19,12 +19,6 @@ namespace CCImWidgets
         _camera->setCameraFlag(CameraFlag::USER1);
         _camera->setName(displayName);
 
-        Editor::getInstance()->scheduleOnce([this](float)
-        {
-            updateFrameBufferObject(1, 1);
-            Editor::getInstance()->addChild(_camera);
-		}, 0, displayName);
-
         return true;
     }
 
@@ -38,20 +32,24 @@ namespace CCImWidgets
         }
 
 		_windowSize = ImGui::GetWindowSize();
-        
     }
 
 	void Preview::update(float)
 	{
+        if (!_camera->getParent())
+            Editor::getInstance()->addChild(_camera);
+
+        bool isRenderTextureDirty = true;
 		if (Texture2D* texture = getRenderTexture())
         {
             const unsigned int wide = texture->getPixelsWide();
             const unsigned int high = texture->getPixelsHigh();
-            if (std::abs(_windowSize.x - wide) >= 1.0f || std::abs(_windowSize.y - high) >= 1.0f)
-            {
-                updateFrameBufferObject((unsigned int)_windowSize.x, (unsigned int)_windowSize.y);
-            }
+            if (std::abs(_windowSize.x - wide) < 1.0f || std::abs(_windowSize.y - high) < 1.0f)
+                isRenderTextureDirty = false;
         }
+
+        if (isRenderTextureDirty)
+            updateFrameBufferObject((unsigned int)_windowSize.x, (unsigned int)_windowSize.y);
 	}
 
     void Preview::updateFrameBufferObject(unsigned int width, unsigned int height)

@@ -17,7 +17,7 @@ namespace CCImWidgets
         cocos2d::Texture2D* getRenderTexture() const;
 
         cocos2d::RefPtr<cocos2d::Camera> _camera;
-		ImVec2 _windowSize;
+		ImVec2 _windowSize = {1.0f, 1.0f};
     };
 }
 

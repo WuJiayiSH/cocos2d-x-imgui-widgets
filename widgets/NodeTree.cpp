@@ -61,12 +61,17 @@ namespace CCImWidgets
         }
     }
 
-    void NodeTree::draw()
+    void NodeTree::draw(bool* open)
     {
-        static const std::string path = "CCImGuiWidgets.NodeTree.SelectedNode";
-        s_selectedNode = dynamic_cast<Node*>(Editor::getInstance()->getUserObject(path));
-        drawNode(Director::getInstance()->getRunningScene());
-		Editor::getInstance()->setUserObject(path, s_selectedNode);
+        if (ImGui::Begin(getDisplayName().c_str(), open))
+        {
+            static const std::string path = "CCImGuiWidgets.NodeTree.SelectedNode";
+            s_selectedNode = dynamic_cast<Node*>(Editor::getInstance()->getUserObject(path));
+            drawNode(Director::getInstance()->getRunningScene());
+            Editor::getInstance()->setUserObject(path, s_selectedNode);
+        }
+
+        ImGui::End();
     }
 
     namespace

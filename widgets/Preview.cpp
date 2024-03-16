@@ -2,6 +2,8 @@
 #include "WidgetFactory.h"
 #include "CCIMGUI.h"
 #include "Editor.h"
+#include "NodeFactory.h"
+#include "Helper.h"
 
 using namespace cocos2d;
 
@@ -22,16 +24,74 @@ namespace CCImWidgets
         return true;
     }
 
-    void Preview::draw()
+    void Preview::draw(bool* open)
     {
-        if (Texture2D* texture = getRenderTexture())
+        if (ImGui::Begin(getDisplayName().c_str(), open, ImGuiWindowFlags_MenuBar))
         {
-            const unsigned int wide = texture->getPixelsWide();
-            const unsigned int high = texture->getPixelsHigh();
-            ImGui::Image((ImTextureID)texture->getName(), ImVec2((float)wide, (float)high));
+            if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::BeginMenu("File"))
+                {
+                    if (ImGui::MenuItem("New"))
+                    {
+                        
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Open.."))
+                    {
+                        
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Save", "CTRL+S"))
+                    {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Save As..."))
+                    {
+                        
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Close"))
+                    {
+                        *open = false;
+                    }
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Add"))
+                {
+                    for (const auto& pair : NodeFactory::getInstance()->getCreators())
+                    {
+                        const NodeFactory::NodeCreator& creator = pair.second;
+                        Helper::drawMenuItem(creator._displayName, [&creator]{
+                            NodeFactory::getInstance()->createNode(creator._name);
+                        });
+                    }
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenuBar();
+            }
+
+            
+            if (Texture2D* texture = getRenderTexture())
+            {
+                const unsigned int wide = texture->getPixelsWide();
+                const unsigned int high = texture->getPixelsHigh();
+                ImGui::Image((ImTextureID)texture->getName(), ImVec2((float)wide, (float)high));
+            }
+
+            _windowSize = ImGui::GetWindowSize();
         }
 
-		_windowSize = ImGui::GetWindowSize();
+        ImGui::End();
     }
 
 	void Preview::update(float)

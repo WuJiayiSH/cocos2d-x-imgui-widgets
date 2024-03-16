@@ -3,46 +3,12 @@
 #include "WidgetFactory.h"
 #include "CCIMGUI.h"
 #include "CCImGuiLayer.h"
+#include "Helper.h"
 
 namespace CCImWidgets
 {
     namespace
     {
-        void drawMenuItem(const std::string& displayName, const std::function<void()> callback)
-        {
-            size_t start = 0;
-            size_t end = displayName.find("/", start);
-
-            size_t depth = 0;
-            bool isMenuOpened = true;
-            while (end != std::string::npos && isMenuOpened)
-            {
-                if (ImGui::BeginMenu(displayName.substr(start, end).c_str()))
-                {
-                    depth++;
-                    start = end + 1;
-                    end = displayName.find("/", start);
-                }
-                else
-                {
-                    isMenuOpened = false;
-                }
-            }
-            
-            if (isMenuOpened)
-            {
-                if (ImGui::MenuItem(displayName.substr(start).c_str()))
-                {
-					callback();
-                }
-            }
-
-            while (depth-- > 0)
-            {
-                ImGui::EndMenu();
-            }
-        }
-
         void drawDockSpace()
         {
             ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -73,25 +39,21 @@ namespace CCImWidgets
                     for (const auto& pair : NodeFactory::getInstance()->getCreators())
                     {
                         const NodeFactory::NodeCreator& creator = pair.second;
-                        drawMenuItem(creator._displayName, [&creator]{
+                        Helper::drawMenuItem(creator._displayName, [&creator]{
                             NodeFactory::getInstance()->createNode(creator._name);
                         });
                     }
                     ImGui::EndMenu();
                 }
 
-                if (ImGui::BeginMenu("Layout"))
-                {
-                    ImGui::EndMenu();
-                }
-                
                 if (ImGui::BeginMenu("Widget"))
                 {
                     for (const auto& pair : WidgetFactory::getInstance()->getCreators())
                     {
                         const WidgetFactory::Creator& creator = pair.second;
-                        drawMenuItem(creator.getDisplayName(), [&creator]{
-                            WidgetFactory::getInstance()->createWidget(creator.getName());
+                        Helper::drawMenuItem(creator.getDisplayName(), [&creator]{
+                            Widget* widget = WidgetFactory::getInstance()->createWidget(creator.getName());
+                            Editor::getInstance()->addWidget(widget);
                         });
                     }
                     ImGui::EndMenu();
@@ -164,12 +126,8 @@ namespace CCImWidgets
                 continue;
 
             bool open = true;
-            if (ImGui::Begin(widget->getDisplayName().c_str(), &open))
-            {
-                widget->draw();
-            }
-            ImGui::End();
-        
+            widget->draw(&open);
+
             if (!open)
                 widget = nullptr;
         }

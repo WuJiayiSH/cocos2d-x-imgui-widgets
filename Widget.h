@@ -24,7 +24,7 @@ namespace CCImWidgets
         virtual bool init(const std::string& name, const std::string& displayName, size_t count);
 
     private:
-        virtual void draw() = 0;
+        virtual void draw(bool* open) = 0;
         virtual void update(float) {};
 
         std::string _name;

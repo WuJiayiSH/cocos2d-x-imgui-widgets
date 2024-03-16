@@ -9,7 +9,7 @@ namespace CCImWidgets
     class NodeProperties: public Widget
     {
     private:
-        void draw() override;
+        void draw(bool* open) override;
     };
 }
 

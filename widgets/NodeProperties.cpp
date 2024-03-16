@@ -10,15 +10,20 @@ using namespace std;
 
 namespace CCImWidgets
 {
-    void NodeProperties::draw()
+    void NodeProperties::draw(bool* open)
     {
-        if (cocos2d::Node* node = dynamic_cast<cocos2d::Node*>(Editor::getInstance()->getUserObject("CCImGuiWidgets.NodeTree.SelectedNode")))
+        if (ImGui::Begin(getDisplayName().c_str(), open))
         {
-            if (NodeVisitor* visitor = static_cast<NodeVisitor*>(node->getComponent("CCImWidgets.NodeVisitor")))
+            if (cocos2d::Node* node = dynamic_cast<cocos2d::Node*>(Editor::getInstance()->getUserObject("CCImGuiWidgets.NodeTree.SelectedNode")))
             {
-                visitor->draw();
+                if (NodeVisitor* visitor = static_cast<NodeVisitor*>(node->getComponent("CCImWidgets.NodeVisitor")))
+                {
+                    visitor->draw();
+                }
             }
         }
+
+        ImGui::End();
     }
 
     namespace

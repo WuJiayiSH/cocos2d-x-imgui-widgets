@@ -30,52 +30,7 @@ namespace CCImWidgets
         {
             if (ImGui::BeginMenuBar())
             {
-                if (ImGui::BeginMenu("File"))
-                {
-                    if (ImGui::MenuItem("New"))
-                    {
-                        
-                    }
-
-                    ImGui::Separator();
-
-                    if (ImGui::MenuItem("Open.."))
-                    {
-                        
-                    }
-
-                    ImGui::Separator();
-
-                    if (ImGui::MenuItem("Save", "CTRL+S"))
-                    {
-                        
-                    }
-
-                    if (ImGui::MenuItem("Save As..."))
-                    {
-                        
-                    }
-
-                    ImGui::Separator();
-
-                    if (ImGui::MenuItem("Close"))
-                    {
-                        *open = false;
-                    }
-                    ImGui::EndMenu();
-                }
-
-                if (ImGui::BeginMenu("Add"))
-                {
-                    for (const auto& pair : NodeFactory::getInstance()->getCreators())
-                    {
-                        const NodeFactory::NodeCreator& creator = pair.second;
-                        Helper::drawMenuItem(creator._displayName, [&creator]{
-                            NodeFactory::getInstance()->createNode(creator._name);
-                        });
-                    }
-                    ImGui::EndMenu();
-                }
+                
 
                 ImGui::EndMenuBar();
             }
@@ -109,7 +64,17 @@ namespace CCImWidgets
         }
 
         if (isRenderTextureDirty)
+        {
+            _camera->removeFromParent();
+            _camera = Camera::createOrthographic(_windowSize.x, _windowSize.y, -1024, 1024);
+            if (!_camera)
+                return ;
+
+            _camera->setCameraFlag(CameraFlag::USER1);
+            _camera->setName(getDisplayName().c_str());
+            Editor::getInstance()->addChild(_camera);
             updateFrameBufferObject((unsigned int)_windowSize.x, (unsigned int)_windowSize.y);
+        }
 	}
 
     void Preview::updateFrameBufferObject(unsigned int width, unsigned int height)

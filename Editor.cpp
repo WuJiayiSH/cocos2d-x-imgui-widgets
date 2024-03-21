@@ -9,12 +9,64 @@ namespace CCImWidgets
 {
     namespace
     {
+        size_t s_selectedSearthPathIndex = 0;
+
+        void DrawNode(const std::string& path, const std::vector<std::string>& list)
+        {
+            cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
+            for(size_t i = 2; i < list.size(); i++)
+            {
+				CCLOG("%s", list[i].c_str());
+                size_t pos = list[i].find_last_of('/', list[i].size() - 2);
+                std::string filename = list[i];
+                if (pos != std::string::npos)
+                {
+                    filename = filename.substr(pos + 1);
+                }
+                
+                if(fileUtils->isDirectoryExist(list[i]))
+                {
+                    bool ok;
+                    const std::vector<std::string>& children = fileUtils->listFiles(list[i]);
+                    if (children.size() > 2)
+                    {
+                        ok = ImGui::TreeNodeEx(
+                            list[i].c_str(),
+                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ,
+                            "%s",
+                            filename.c_str()
+                        );
+
+						if (ok)
+						{
+							DrawNode(list[i], children);
+							ImGui::TreePop();
+						}
+                    }
+                    else
+                    {
+                        ok = ImGui::TreeNodeEx(
+                            list[i].c_str(),
+                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen ,
+                            "%s",
+                            filename.c_str()
+                        );
+                    }
+        
+                    
+                }
+                
+            }
+        }
+
+
+
         void drawFileSystem(bool* open)
         {
             cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
-            if (!ImGui::IsPopupOpen("Save?"))
+            if (!ImGui::IsPopupOpen("Save?") && *open)
                 ImGui::OpenPopup("Save?");
-            if (ImGui::BeginPopupModal("Save?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            if (ImGui::BeginPopupModal("Save?", open, ImGuiWindowFlags_AlwaysAutoResize))
             {
                 ImGui::Text("Save change to the following items?");
                 
@@ -31,31 +83,50 @@ namespace CCImWidgets
                 // {
                 //     ImGui::TreeNodeEx(list[i].c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
                 // }
-                static size_t selected = 0;
+                
 
-                if (ImGui::BeginCombo("Search Path", paths[selected].c_str()))
+                if (ImGui::BeginCombo("Search Path", paths[s_selectedSearthPathIndex].c_str()))
                 {
                     for (size_t i = 0; i < paths.size(); i++)
                     {
-						if (ImGui::Selectable(paths[i].c_str(), i == selected))
+						if (ImGui::Selectable(paths[i].c_str(), i == s_selectedSearthPathIndex))
                         {
-                            selected = i;
+                            s_selectedSearthPathIndex = i;
                         }
                     }
                     ImGui::EndCombo();
                 }
 
                 ImGui::BeginChild("left pane", ImVec2(150, 200), true);
-                for (int i = 0; i < 100; i++)
-                {
-                    // FIXME: Good candidate to use ImGuiSelectableFlags_SelectOnNav
-                    char label[128];
-                    sprintf(label, "MyObject %d", i);
-                    if (ImGui::Selectable(label, selected == i))
-                        selected = i;
-                }
+				;
+				DrawNode("/", cocos2d::FileUtils::getInstance()->listFiles("/"));
                 ImGui::EndChild();
                         ImGui::SameLine();
+
+                ImGui::BeginChild("right pane", ImVec2(500, 200), true);
+				;
+
+                auto& files = cocos2d::FileUtils::getInstance()->listFiles("/");
+                for (auto& file: files)
+                {
+                    bool b = false;
+                    if(fileUtils->isFileExist(file))
+                    {
+                        size_t pos = file.find_last_of('/');
+                        std::string filename = file;
+                        if (pos != std::string::npos)
+                        {
+                            filename = filename.substr(pos + 1);
+                        }
+
+                        ImGui::Selectable(filename.c_str(),    b);
+                    }
+                    
+                }
+				
+                
+                ImGui::EndChild();
+
                 ImVec2 button_size(ImGui::GetFontSize() * 7.0f, 0.0f);
                 if (ImGui::Button("Yes", button_size))
                 {
@@ -132,6 +203,37 @@ namespace CCImWidgets
                     if (ImGui::MenuItem("Exit"))
                     {
                         cocos2d::Director::getInstance()->end();
+                    }
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Edit"))
+                {
+                    if (ImGui::MenuItem("Undo", "CTRL+Z"))
+                    {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Redo", "CTRL+Y"))
+                    {
+                        
+                    }
+
+                    ImGui::Separator();
+
+                    if (ImGui::MenuItem("Cut", "CTRL+X"))
+                    {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Copy", "CTRL+C"))
+                    {
+                        
+                    }
+
+                    if (ImGui::MenuItem("Paste", "CTRL+V"))
+                    {
+                        
                     }
                     ImGui::EndMenu();
                 }
@@ -234,8 +336,8 @@ namespace CCImWidgets
                 widget = nullptr;
         }
 
-	// 	bool open;
-    //    drawFileSystem(&open);
+	 	static bool open = true;
+        drawFileSystem(&open);
     }
 
     void Editor::update(float dt)

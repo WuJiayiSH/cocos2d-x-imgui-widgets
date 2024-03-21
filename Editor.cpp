@@ -5,6 +5,7 @@
 #include "CCImGuiLayer.h"
 #include "Helper.h"
 
+using namespace cocos2d;
 namespace CCImWidgets
 {
     namespace
@@ -12,54 +13,59 @@ namespace CCImWidgets
         
         const size_t numOfIgnoreDirectories = 2;// ignore . and ..
         std::string s_fileDialogCurrentPath;
+		std::string s_fileDialogCurrentFile;
         void drawDirectories(const std::vector<std::string>& directories)
         {
             FileUtils* fileUtils = FileUtils::getInstance();
-            for(size_t i = numOfIgnoreDirectories; i < directories.size(); i++)
+            for(size_t i = 0; i < directories.size(); i++)
             {
                 const std::string& directory = directories[i];
-                
+				CCLOG("%s", directory.c_str());
                 
                 if(fileUtils->isDirectoryExist(directory))
                 {
-                    const char* dirname = directory.c_str();
-                    size_t lastSlash = directory.find_last_of('/', directory.size() - 2);
-                    if (lastSlash != std::string::npos)
-                    {
-                        dirname = dirname + 1 + lastSlash;
-                    }
+                    size_t size = directory.size();
+                    size_t pos = directory.find_last_of('/', size - 2);
+                    pos = (pos == std::string::npos) ? 0 : pos + 1;
+                    std::string dirname = directory.substr(pos, size - 1 - pos);
+                    
 
-                    const std::vector<std::string>& subDirectories = fileUtils->directoriesFiles(directory);
-                    if (subDirectories.size() > numOfIgnoreDirectories)
-                    {
-                        bool ok = ImGui::TreeNodeEx(
-                            dirname,
-                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick,
-                            "%s",
-                            dirname
-                        );
+					//if (dirname != "." && dirname != "..")
+					{
+						ImGuiTreeNodeFlags selectedFlag = s_fileDialogCurrentPath == directory ? ImGuiTreeNodeFlags_Selected : 0;
 
-                        if (ImGui::IsItemClicked())
-                            s_fileDialogCurrentPath = directory;
-
-                        if (ok)
+						const std::vector<std::string>& subDirectories = fileUtils->listFiles(directory);
+						if (subDirectories.size() > numOfIgnoreDirectories)
 						{
-							drawDirectories(subDirectories);
-							ImGui::TreePop();
-						}
-                    }
-                    else
-                    {
-                        ok = ImGui::TreeNodeEx(
-                            dirname,
-                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen ,
-                            "%s",
-                            dirname
-                        );
+							bool ok = ImGui::TreeNodeEx(
+								dirname.c_str(),
+								ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | selectedFlag,
+								"%s",
+								dirname.c_str()
+							);
 
-                        if (ImGui::IsItemClicked())
-                            s_fileDialogCurrentPath = directory;
-                    }
+							if (ImGui::IsItemClicked())
+								s_fileDialogCurrentPath = directory;
+
+							if (ok)
+							{
+								drawDirectories(subDirectories);
+								ImGui::TreePop();
+							}
+						}
+						else
+						{
+							ImGui::TreeNodeEx(
+								dirname.c_str(),
+								ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | selectedFlag,
+								"%s",
+								dirname.c_str()
+							);
+
+							if (ImGui::IsItemClicked())
+								s_fileDialogCurrentPath = directory;
+						}
+					}
                 }
             }
         }
@@ -74,83 +80,66 @@ namespace CCImWidgets
             if (ImGui::BeginPopupModal("Save?", open, ImGuiWindowFlags_AlwaysAutoResize))
             {
                 // search paths
-                static std::string currentSearchPath;
+                
                 const std::vector<std::string>& searchPaths = fileUtils->getSearchPaths();
-                if (currentSearchPath.empty())
-                {
-                    if (searchPaths.size() > 0)
-                        currentSearchPath = searchPaths[0];
-                }
-                else
-                {
-                    if (std::find(searchPaths.begin(), searchPaths.end(), currentSearchPath) == searchPaths.end())
-                    {
-                        currentSearchPath = searchPaths.size() > 0 ? searchPaths[0] : "";
-                    }
-                }
+                
 
-                if (s_fileDialogCurrentPath.empty())
-                    s_fileDialogCurrentPath = currentSearchPath;
+                if (s_fileDialogCurrentPath.empty() && searchPaths.size() > 0)
+                    s_fileDialogCurrentPath = searchPaths[0];
 
                 
-                if (ImGui::BeginCombo("Search Path", currentSearchPath.c_str()))
+                if (ImGui::BeginTable("table1", 2, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_ContextMenuInBody, ImVec2(600, 300)))
                 {
-                    for (size_t i = 0; i < searchPaths.size(); i++)
-                    {
-                        const std::string& searchPath = searchPaths[i];
-						if (ImGui::Selectable(searchPath.c_str(), currentSearchPath == searchPath))
-                        {
-                            currentSearchPath = searchPath;
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
+                    ImGui::TableSetupColumn("Search Paths", ImGuiTableColumnFlags_WidthFixed);
+                    ImGui::TableSetupColumn("Files", ImGuiTableColumnFlags_WidthStretch);
+                    ImGui::TableHeadersRow();
 
-                // directory list
-                ImGui::BeginChild("FileDialogLeftPane", ImVec2(150, 200), true);
-				drawDirectories(FileUtils::getInstance()->listFiles("/"));
-                ImGui::EndChild();
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    drawDirectories(searchPaths);
 
-                ImGui::SameLine();
+                    ImGui::TableSetColumnIndex(1);
+					const std::vector<std::string>& files = cocos2d::FileUtils::getInstance()->listFiles(s_fileDialogCurrentPath);
+					for (const std::string& file: files)
+					{
+						bool b = false;
+						if(fileUtils->isFileExist(file))
+						{
+							size_t lastSlash = file.find_last_of('/');
+							const char* filename = file.c_str();
+							if (lastSlash != std::string::npos)
+							{
+								filename = filename + lastSlash + 1;
+							}
 
-                // file list
-                ImGui::BeginChild("right pane", ImVec2(500, 200), true);
-                auto& files = cocos2d::FileUtils::getInstance()->listFiles(s_fileDialogCurrentPath);
-                for (auto& file: files)
-                {
-                    bool b = false;
-                    if(fileUtils->isFileExist(file))
-                    {
-                        size_t pos = file.find_last_of('/');
-                        std::string filename = file;
-                        if (pos != std::string::npos)
-                        {
-                            filename = filename.substr(pos + 1);
-                        }
-
-                        ImGui::Selectable(filename.c_str(),    b);
-                    }
+							if (ImGui::Selectable(filename, s_fileDialogCurrentFile == file))
+							{
+								s_fileDialogCurrentFile = file;
+							}
+						}
                     
+					}
+
+                    
+                    ImGui::EndTable();
                 }
 				
-                
-                ImGui::EndChild();
-
                 ImVec2 button_size(ImGui::GetFontSize() * 7.0f, 0.0f);
                 if (ImGui::Button("Yes", button_size))
                 {
-                    
+                    *open = false;
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("No", button_size))
                 {
-                    
+                    *open = false;
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Cancel", button_size))
                 {
+                    *open = false;
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::EndPopup();

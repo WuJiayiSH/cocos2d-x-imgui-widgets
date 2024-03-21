@@ -9,53 +9,58 @@ namespace CCImWidgets
 {
     namespace
     {
-        size_t s_selectedSearthPathIndex = 0;
-
-        void DrawNode(const std::string& path, const std::vector<std::string>& list)
+        
+        const size_t numOfIgnoreDirectories = 2;// ignore . and ..
+        std::string s_fileDialogCurrentPath;
+        void drawDirectories(const std::vector<std::string>& directories)
         {
-            cocos2d::FileUtils* fileUtils = cocos2d::FileUtils::getInstance();
-            for(size_t i = 2; i < list.size(); i++)
+            FileUtils* fileUtils = FileUtils::getInstance();
+            for(size_t i = numOfIgnoreDirectories; i < directories.size(); i++)
             {
-				CCLOG("%s", list[i].c_str());
-                size_t pos = list[i].find_last_of('/', list[i].size() - 2);
-                std::string filename = list[i];
-                if (pos != std::string::npos)
-                {
-                    filename = filename.substr(pos + 1);
-                }
+                const std::string& directory = directories[i];
                 
-                if(fileUtils->isDirectoryExist(list[i]))
+                
+                if(fileUtils->isDirectoryExist(directory))
                 {
-                    bool ok;
-                    const std::vector<std::string>& children = fileUtils->listFiles(list[i]);
-                    if (children.size() > 2)
+                    const char* dirname = directory.c_str();
+                    size_t lastSlash = directory.find_last_of('/', directory.size() - 2);
+                    if (lastSlash != std::string::npos)
                     {
-                        ok = ImGui::TreeNodeEx(
-                            list[i].c_str(),
-                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ,
+                        dirname = dirname + 1 + lastSlash;
+                    }
+
+                    const std::vector<std::string>& subDirectories = fileUtils->directoriesFiles(directory);
+                    if (subDirectories.size() > numOfIgnoreDirectories)
+                    {
+                        bool ok = ImGui::TreeNodeEx(
+                            dirname,
+                            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick,
                             "%s",
-                            filename.c_str()
+                            dirname
                         );
 
-						if (ok)
+                        if (ImGui::IsItemClicked())
+                            s_fileDialogCurrentPath = directory;
+
+                        if (ok)
 						{
-							DrawNode(list[i], children);
+							drawDirectories(subDirectories);
 							ImGui::TreePop();
 						}
                     }
                     else
                     {
                         ok = ImGui::TreeNodeEx(
-                            list[i].c_str(),
+                            dirname,
                             ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen ,
                             "%s",
-                            filename.c_str()
+                            dirname
                         );
+
+                        if (ImGui::IsItemClicked())
+                            s_fileDialogCurrentPath = directory;
                     }
-        
-                    
                 }
-                
             }
         }
 
@@ -68,45 +73,49 @@ namespace CCImWidgets
                 ImGui::OpenPopup("Save?");
             if (ImGui::BeginPopupModal("Save?", open, ImGuiWindowFlags_AlwaysAutoResize))
             {
-                ImGui::Text("Save change to the following items?");
-                
-                std::vector<const char*> items;
-                const std::vector<std::string>& paths = fileUtils->getSearchPaths();
-                for (size_t i = 0; i < paths.size(); i++)
+                // search paths
+                static std::string currentSearchPath;
+                const std::vector<std::string>& searchPaths = fileUtils->getSearchPaths();
+                if (currentSearchPath.empty())
                 {
-                    items.push_back(paths[i].c_str());
-                    // ImGui::TreeNodeEx(paths[i].c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
+                    if (searchPaths.size() > 0)
+                        currentSearchPath = searchPaths[0];
+                }
+                else
+                {
+                    if (std::find(searchPaths.begin(), searchPaths.end(), currentSearchPath) == searchPaths.end())
+                    {
+                        currentSearchPath = searchPaths.size() > 0 ? searchPaths[0] : "";
+                    }
                 }
 
-                // const std::vector<std::string>& list = fileUtils->listFiles("/");
-                // for (size_t i = 2; i < list.size(); i++)
-                // {
-                //     ImGui::TreeNodeEx(list[i].c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanFullWidth);
-                // }
-                
+                if (s_fileDialogCurrentPath.empty())
+                    s_fileDialogCurrentPath = currentSearchPath;
 
-                if (ImGui::BeginCombo("Search Path", paths[s_selectedSearthPathIndex].c_str()))
+                
+                if (ImGui::BeginCombo("Search Path", currentSearchPath.c_str()))
                 {
-                    for (size_t i = 0; i < paths.size(); i++)
+                    for (size_t i = 0; i < searchPaths.size(); i++)
                     {
-						if (ImGui::Selectable(paths[i].c_str(), i == s_selectedSearthPathIndex))
+                        const std::string& searchPath = searchPaths[i];
+						if (ImGui::Selectable(searchPath.c_str(), currentSearchPath == searchPath))
                         {
-                            s_selectedSearthPathIndex = i;
+                            currentSearchPath = searchPath;
                         }
                     }
                     ImGui::EndCombo();
                 }
 
-                ImGui::BeginChild("left pane", ImVec2(150, 200), true);
-				;
-				DrawNode("/", cocos2d::FileUtils::getInstance()->listFiles("/"));
+                // directory list
+                ImGui::BeginChild("FileDialogLeftPane", ImVec2(150, 200), true);
+				drawDirectories(FileUtils::getInstance()->listFiles("/"));
                 ImGui::EndChild();
-                        ImGui::SameLine();
 
+                ImGui::SameLine();
+
+                // file list
                 ImGui::BeginChild("right pane", ImVec2(500, 200), true);
-				;
-
-                auto& files = cocos2d::FileUtils::getInstance()->listFiles("/");
+                auto& files = cocos2d::FileUtils::getInstance()->listFiles(s_fileDialogCurrentPath);
                 for (auto& file: files)
                 {
                     bool b = false;

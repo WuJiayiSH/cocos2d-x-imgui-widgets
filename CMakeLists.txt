@@ -1,11 +1,21 @@
 
 file(GLOB_RECURSE CCIMGUI_WIDGETS_SRC
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/Widget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/Editor.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ImGuiHelper.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/ImGuiDemo.cpp
 )
 
 file(GLOB_RECURSE CCIMGUI_WIDGETS_HEADER
     ${CMAKE_CURRENT_LIST_DIR}/CCImGuiWidgets.h
     ${CMAKE_CURRENT_LIST_DIR}/CCInspector.h
+    ${CMAKE_CURRENT_LIST_DIR}/Widget.h
+    ${CMAKE_CURRENT_LIST_DIR}/WidgetFactory.h
+    ${CMAKE_CURRENT_LIST_DIR}/Editor.h
+    ${CMAKE_CURRENT_LIST_DIR}/ImGuiHelper.h
+    ${CMAKE_CURRENT_LIST_DIR}/widgets/ImGuiDemo.h
 )
 
 list(LENGTH FAIRYGUI_SRC FAIRYGUI_SRC_LENGTH)

@@ -30,6 +30,8 @@ namespace CCImWidgets
 
             uint32_t getMask() const { return _mask; };
 
+            Widget* create() const;
+
         private:
             std::string _name;
             std::string _displayName;

@@ -105,6 +105,7 @@ namespace CCImWidgets
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
         setLocalZOrder(INT_MAX);
+        setName("Editor");
         addChild(layer, INT_MAX, "ImGuiLayer");
 		return true;
     }

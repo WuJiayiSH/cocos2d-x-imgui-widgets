@@ -8,6 +8,8 @@ file(GLOB_RECURSE CCIMGUI_WIDGETS_SRC
     ${CMAKE_CURRENT_LIST_DIR}/widgets/ImGuiDemo.cpp
     ${CMAKE_CURRENT_LIST_DIR}/widgets/Viewport.cpp
     ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeTree.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/visitors/Node3D.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/NodeFactory.cpp
 )
 
 file(GLOB_RECURSE CCIMGUI_WIDGETS_HEADER
@@ -21,6 +23,9 @@ file(GLOB_RECURSE CCIMGUI_WIDGETS_HEADER
     ${CMAKE_CURRENT_LIST_DIR}/widgets/ImGuiDemo.h
     ${CMAKE_CURRENT_LIST_DIR}/widgets/Viewport.h
     ${CMAKE_CURRENT_LIST_DIR}/widgets/NodeTree.h
+    ${CMAKE_CURRENT_LIST_DIR}/visitors/Node3D.h
+    ${CMAKE_CURRENT_LIST_DIR}/NodeFactory.h
+    ${CMAKE_CURRENT_LIST_DIR}/NodeVisitor.h
 )
 
 list(LENGTH FAIRYGUI_SRC FAIRYGUI_SRC_LENGTH)

@@ -21,6 +21,8 @@ namespace CCImWidgets
         void addWidget(Widget* widget);
         Widget* getWidgetByName(const std::string& name) const;
         
+        cocos2d::Node* getEditingNode() const { return _editingNode; };
+
    CC_CONSTRUCTOR_ACCESS: 
         Editor();
 		~Editor();
@@ -35,6 +37,7 @@ namespace CCImWidgets
 
         std::unordered_map<std::string, cocos2d::WeakPtr<cocos2d::Ref>> _userObjects;
         std::vector<cocos2d::RefPtr<Widget>> _widgets;
+        cocos2d::WeakPtr<cocos2d::Node> _editingNode;
     };
 }
 

@@ -65,12 +65,16 @@ namespace CCImWidgets
         {
             s_selectedNode = dynamic_cast<Node*>(Editor::getInstance()->getUserObject(s_selectedNodePath));
 
-            if (Scene* scene = Director::getInstance()->getRunningScene())
-            {
-                if (Internal::DEBUG)
-                {   
+            if (Internal::DEBUG)
+            {   
+                if (Scene* scene = Director::getInstance()->getRunningScene())
+                {
                     drawNode(scene);
                 }
+            }
+            else if (cocos2d::Node* editingNode = Editor::getInstance()->getEditingNode())
+            {
+                drawNode(editingNode);
             }
         }
 

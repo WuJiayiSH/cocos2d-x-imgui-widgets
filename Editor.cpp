@@ -1,4 +1,6 @@
 #include "Editor.h"
+#include "NodeFactory.h"
+#include "NodeVisitor.h"
 #include "WidgetFactory.h"
 #include "CCIMGUI.h"
 #include "CCImGuiLayer.h"
@@ -8,6 +10,8 @@ namespace CCImWidgets
 {
     namespace
     {
+        static cocos2d::RefPtr<cocos2d::Node> s_nextEditingNode;
+
         void drawDockSpace()
         {
             ImGuiWindowFlags windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
@@ -30,6 +34,47 @@ namespace CCImWidgets
 
             if (ImGui::BeginMenuBar())
             {
+                if (ImGui::BeginMenu("File"))
+                {
+                    if (ImGui::BeginMenu("New"))
+                    {
+                        const std::unordered_map<std::string, NodeFactory::Creator>& creators = NodeFactory::getInstance()->getCreators();
+                        for (const std::pair<std::string, NodeFactory::Creator>& pair : creators)
+                        {
+                            const NodeFactory::Creator& creator = pair.second;
+                            if ((creator.getMask() & static_cast<uint32_t>(NodeVisitorFlag::CAN_BE_ROOT)) == 0)
+                                continue;
+
+                            const std::string& displayName = creator.getDisplayName();
+                            const size_t lastSlash = displayName.find_last_of('/');
+                            
+                            bool isMenuOpen = true;
+                            if (lastSlash != std::string::npos)
+                                isMenuOpen = ImGuiHelper::BeginMenu(displayName.substr(0, lastSlash).c_str());
+
+                            if (isMenuOpen)
+                            {
+                                if (ImGui::MenuItem(displayName.c_str() + (lastSlash != std::string::npos ? lastSlash + 1 : 0)))
+                                {
+                                    s_nextEditingNode = creator.create();
+                                }
+                            }
+
+                            if (lastSlash != std::string::npos)
+                                ImGuiHelper::EndMenu();
+                        }
+                        ImGui::EndMenu();
+                    }
+
+                    ImGui::Separator();
+                    if (ImGui::MenuItem("Exit"))
+                    {
+                        cocos2d::Director::getInstance()->end();
+                    }
+                    
+                    ImGui::EndMenu();
+                }
+
                 if (ImGui::BeginMenu("Widget"))
                 {
                     const std::unordered_map<std::string, WidgetFactory::Creator>& creators = WidgetFactory::getInstance()->getCreators();
@@ -47,11 +92,10 @@ namespace CCImWidgets
 						{
 							if (ImGui::MenuItem(displayName.c_str() + (lastSlash != std::string::npos ? lastSlash + 1 : 0)))
 							{
-                                const std::string& name = creator.getName();
-								Widget* lastWidget = Editor::getInstance()->getWidgetByName(name);
-                                if (lastWidget == nullptr || !lastWidget->isUnique())
+								Widget* lastWidget = Editor::getInstance()->getWidgetByName(creator.getName());
+                                if (lastWidget == nullptr || lastWidget->allowMultiple())
                                 {
-                                    if (Widget* widget = WidgetFactory::getInstance()->createWidget(name))
+                                    if (Widget* widget = creator.create())
                                     {
                                         Editor::getInstance()->addWidget(widget);
                                     }
@@ -152,6 +196,17 @@ namespace CCImWidgets
         {
             if (widget)
                 widget->update(dt);
+        }
+
+        if (s_nextEditingNode)
+        {
+            if (_editingNode)
+                _editingNode->removeFromParent();
+
+			cocos2d::Director::getInstance()->getRunningScene()->addChild(s_nextEditingNode);
+
+            _editingNode = s_nextEditingNode;
+            s_nextEditingNode = nullptr;
         }
     }
 

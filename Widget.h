@@ -7,7 +7,7 @@ namespace CCImWidgets
 {
     enum class WidgetFlag : uint32_t
 	{
-		UNIQUE = 1
+		DISALLOW_MULTIPLE = 1
 	};
 
     class Widget: public cocos2d::Ref
@@ -18,7 +18,7 @@ namespace CCImWidgets
 
         const std::string& getName() const {return _name;}
         const std::string& getWindowName() const {return _windowName;}
-        bool isUnique() const { return (_mask & static_cast<uint32_t>(WidgetFlag::UNIQUE)) > 0; };
+        bool allowMultiple() const { return (_mask & static_cast<uint32_t>(WidgetFlag::DISALLOW_MULTIPLE)) > 0; };
         uint32_t getMask() const { return _mask; };
         
     protected:

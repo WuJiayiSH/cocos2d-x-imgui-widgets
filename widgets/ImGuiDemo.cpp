@@ -14,7 +14,7 @@ namespace CCImWidgets
         static WidgetFactory::AutoRegister<ImGuiDemo> s_register(
             "CCImWidgets.ImGuiDemo",
             "ImGui Demo",
-            static_cast<uint32_t>(WidgetFlag::UNIQUE)
+            static_cast<uint32_t>(WidgetFlag::DISALLOW_MULTIPLE)
         );
     }
 }

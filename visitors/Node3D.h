@@ -7,6 +7,8 @@ namespace CCImWidgets
 {
     class Node3D: public NodeVisitor
     {
+    public:
+        void visit() override;
     };
 }
 

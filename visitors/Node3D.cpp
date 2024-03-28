@@ -2,8 +2,15 @@
 #include "NodeFactory.h"
 #include "cocos2d.h"
 
+using namespace cocos2d;
+
 namespace CCImWidgets
 {
+	void Node3D::visit()
+	{
+		draw("Position", &Node::getPosition3D, &Node::setPosition3D, getOwner());
+	}
+
     namespace
     {
         static NodeFactory::AutoRegister<Node3D> s_register(

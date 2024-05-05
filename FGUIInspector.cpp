@@ -228,7 +228,7 @@ namespace CCImGuiWidgets
         ImGui::SetNextWindowSize(ImVec2(400, 615), ImGuiCond_FirstUseEver);
         if (ImGui::Begin("FGUIInspector", open))
         {
-            ImGui::InputTextWithHint("", "Search Object...", queryString, IM_ARRAYSIZE(queryString));
+            ImGui::InputTextWithHint("##Search Object", "Search Object...", queryString, IM_ARRAYSIZE(queryString));
             ImGui::SameLine();
             if (ImGui::Button("X"))
             {

@@ -385,7 +385,7 @@ namespace CCImGuiWidgets
         ImGui::SetNextWindowSize(ImVec2(400, 575), ImGuiCond_FirstUseEver);
         if (ImGui::Begin("Inspector", open))
         {
-            ImGui::InputTextWithHint("", "Search Node...", queryString, IM_ARRAYSIZE(queryString));
+            ImGui::InputTextWithHint("##Search Node", "Search Node...", queryString, IM_ARRAYSIZE(queryString));
             ImGui::SameLine();
             if (ImGui::Button("X"))
             {
